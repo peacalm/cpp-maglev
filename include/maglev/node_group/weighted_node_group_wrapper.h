@@ -1,5 +1,6 @@
 #pragma once
-#include <algorithm>
+
+#include <type_traits>
 #include <utility>
 
 #include "maglev/util/type_traits.h"
@@ -44,13 +45,17 @@ public:
     for (const auto& i : *this) {
       int w = i->weight();
       weight_sum_ += w;
-      real_max_weight_ = std::max(real_max_weight_, w);
+      if (w > real_max_weight_) {
+        real_max_weight_ = w;
+      }
     }
     avg_weight_ = double(weight_sum_) / double(base_t::size());
     max_weight_ = real_max_weight_;
     if (max_avg_rate_limit_ > 0) {
-      int limit = max_avg_rate_limit_ * double(weight_sum_) / double(base_t::size());
-      max_weight_ = std::min(real_max_weight_, limit);
+      int limit = int(max_avg_rate_limit_ * double(weight_sum_) / double(base_t::size()));
+      if (max_weight_ > limit) {
+        max_weight_ = limit;
+      }
     }
   }
 
