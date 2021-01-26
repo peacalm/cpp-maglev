@@ -40,7 +40,8 @@ public:
   using pick_ret_t = PickRet;
 
 protected:
-  using my_node_has_slot_counted_t = node_has_slot_counted_t<node_t>;
+  using is_slot_counted_node_t = is_slot_counted_t<node_t>;
+  using is_weighted_node_group_t = is_weighted_t<node_group_t>;
 
 public:
 
@@ -108,7 +109,7 @@ protected:
     while (true) {
       auto t = perm_gen.gen_one_num();
       if (!is_slot_distributed(t)) {
-        distribut_slot(t, node_idx, my_node_has_slot_counted_t{});
+        distribut_slot(t, node_idx, is_slot_counted_node_t{});
         ++slot_distributed_cnt;
         break;
       }

@@ -13,6 +13,9 @@ class WeightedNodeWrapper: public NodeBaseType {
   using base_t = NodeBaseType;
 
 public:
+  using weighted_t = void;  // for type trait
+
+public:
   template <typename ...Args>
   WeightedNodeWrapper(int weight, Args&& ...args) : weight_(weight), base_t(std::forward<Args>(args)...) {
     assert(weight > 0);

@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <utility>
 
+#include "maglev/util/type_traits.h"
+
 namespace maglev {
 
 
@@ -10,10 +12,15 @@ class WeightedNodeGroupWrapper: public NodeGroupBaseType {
   using base_t = NodeGroupBaseType;
 
 public:
+  using node_t = typename base_t::node_t;
+
+  using weighted_t = typename std::enable_if<is_weighted_t<node_t>::value, typename node_t::weighted_t>::type;
+
+public:
 
   /// limit max_weight by max_weight <= avg_weight * max_avg_rate_limit, 0 means no limit
   template<typename ...Args>
-  WeightedNodeGroupWrapper(double max_avg_rate_limit, Args&&...args) :
+  WeightedNodeGroupWrapper(double max_avg_rate_limit = 0, Args&&...args) :
       max_avg_rate_limit_(max_avg_rate_limit), base_t(std::forward<Args>(args)...){}
 
   virtual void ready_go() override { base_t::ready_go(); init_weight(); }
@@ -39,9 +46,9 @@ public:
       weight_sum_ += w;
       real_max_weight_ = std::max(real_max_weight_, w);
     }
-    avg_weight_ = double(weight_sum_) / double(size());
+    avg_weight_ = double(weight_sum_) / double(base_t::size());
     if (max_avg_rate_limit_ > 0) {
-      int limit = max_avg_rate_limit_ * double(weight_sum_) / double(size());
+      int limit = max_avg_rate_limit_ * double(weight_sum_) / double(base_t::size());
       max_weight_ = std::min(real_max_weight_, limit);
     }
   }
