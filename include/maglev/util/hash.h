@@ -3,7 +3,7 @@
 #include <type_traits>
 
 namespace maglev {
-
+namespace util {
 
 template <typename IntType = long long>
 struct MaglevIntHash {
@@ -27,4 +27,6 @@ using def_hash_t = typename std::conditional<std::is_integral<T>::value,
     MaglevIntHash<typename std::conditional<std::is_integral<T>::value, T, long long>::type>,
     std::hash<T>>::type;
 
+
+}  // namespace util
 }  // namespace maglev

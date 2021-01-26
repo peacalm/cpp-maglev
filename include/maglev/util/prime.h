@@ -2,6 +2,7 @@
 
 
 namespace maglev {
+namespace util {
 
 template<typename T, typename V>
 inline constexpr T power(T x, unsigned long long n, V mod) {
@@ -42,4 +43,5 @@ inline constexpr bool is_prime(unsigned int n) {
 }
 
 
+}  // namespace util
 }  // namespace maglev

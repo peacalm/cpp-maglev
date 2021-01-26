@@ -12,7 +12,7 @@ namespace node {
 
 // std::hash for integer got self, which may cause bad performance in maglev,
 // so use MaglevIntHash as default. Or you can specify your own hash method.
-template<typename IdType = std::string, typename HashType = def_hash_t<IdType>>
+template<typename IdType = std::string, typename HashType = util::def_hash_t<IdType>>
 class NodeBase {
 public:
   using node_id_t = IdType;

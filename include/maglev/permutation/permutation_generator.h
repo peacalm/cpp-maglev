@@ -84,7 +84,7 @@ public:
 private:
   void assert_n() {
     assert(n_ > 1);
-    assert(is_prime(n_));
+    assert(util::is_prime(n_));
   }
 
 private:
