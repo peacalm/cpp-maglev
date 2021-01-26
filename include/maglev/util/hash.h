@@ -5,12 +5,11 @@
 namespace maglev {
 
 
-template <
-    typename IntType = long long,
-    typename = typename std::enable_if<std::is_integral<IntType>::value>::type
->
+template <typename IntType = long long>
 struct MaglevIntHash {
-  size_t operator() (IntType n) const {
+  using type = typename std::enable_if<std::is_integral<IntType>::value, IntType>::type;
+
+  size_t operator() (type n) const {
     size_t x = static_cast<size_t>(n);
     x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9ull;
     x = (x ^ (x >> 27)) * 0x94d049bb133111ebull;
