@@ -25,7 +25,7 @@ public:
 
   virtual void ready_go() override { base_t::ready_go(); init_weight(); }
 
-  void set_max_avg_rate_limit(double r) const { max_avg_rate_limit_ = r; }
+  void set_max_avg_rate_limit(double r) { max_avg_rate_limit_ = r; }
 
   double max_avg_rate_limit() const { return max_avg_rate_limit_; }
 
@@ -47,6 +47,7 @@ public:
       real_max_weight_ = std::max(real_max_weight_, w);
     }
     avg_weight_ = double(weight_sum_) / double(base_t::size());
+    max_weight_ = real_max_weight_;
     if (max_avg_rate_limit_ > 0) {
       int limit = max_avg_rate_limit_ * double(weight_sum_) / double(base_t::size());
       max_weight_ = std::min(real_max_weight_, limit);

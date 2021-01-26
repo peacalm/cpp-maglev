@@ -9,6 +9,7 @@
 #include "maglev/hasher/slot_array.h"
 #include "maglev/node/node_base.h"
 #include "maglev/node_group/node_group_base.h"
+#include "maglev/node_group/weighted_node_group_wrapper.h"
 #include "maglev/permutation/permutation_generator.h"
 #include "maglev/util/hash.h"
 #include "maglev/util/type_traits.h"
@@ -18,8 +19,15 @@ namespace maglev {
 
 template <
     typename SlotArrayType = SlotArray<int>,
-    typename NodeGroupType = NodeGroupBase<NodeBase<>>,
-    typename PermutationGeneratorType = PermutationGenerator
+    typename NodeType = NodeBase<>,
+    typename NodeGroupType = typename std::conditional<
+        is_weighted<NodeType>::value,
+        WeightedNodeGroupWrapper<NodeGroupBase<NodeType>>,
+        NodeGroupBase<NodeType>
+    >::type,
+    typename PermutationGeneratorType = typename std::conditional<
+        is_weighted_t<NodeGroupType>::value, PermutationGeneratorWithRand, PermutationGenerator
+    >::type
 >
 class MaglevHasher {
 public:
@@ -79,7 +87,7 @@ public:
     auto p = make_perm_gen_array();
     const auto n = node_size();
     for (size_t node_idx = 0, slot_distributed_cnt = 0; slot_distributed_cnt < slot_size(); ) {
-      select_once(p[node_idx], node_idx, slot_distributed_cnt);
+      select_once(p[node_idx], node_idx, slot_distributed_cnt, is_weighted_node_group_t{});
       if (++node_idx >= n) node_idx = 0;
     }
   }
@@ -105,7 +113,16 @@ protected:
     slot_array_[slot_idx] = (slot_int_t)node_idx;
   }
 
-  void select_once(perm_gen_t& perm_gen, size_t& node_idx, size_t& slot_distributed_cnt) {
+  void select_once(perm_gen_t& perm_gen, size_t& node_idx, size_t& slot_distributed_cnt, std::true_type) {
+    auto& node = node_group_[node_idx];
+    bool slected = 1ULL * perm_gen.my_rand() * node_group_.max_weight() <
+                   1ULL * node->weight() * perm_gen.my_rand_max();
+    if (slected) {
+      select_once(perm_gen, node_idx, slot_distributed_cnt, std::false_type{});
+    }
+  }
+
+  void select_once(perm_gen_t& perm_gen, size_t& node_idx, size_t& slot_distributed_cnt, std::false_type) {
     while (true) {
       auto t = perm_gen.gen_one_num();
       if (!is_slot_distributed(t)) {
