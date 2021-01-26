@@ -24,7 +24,8 @@ private:
 
 public:
 
-  virtual void ready_go() { sort(); }
+  virtual void ready_go() { if (!is_sorted()) sort(); }
+
   void is_sorted() const { return std::is_sorted(base_t::begin(), base_t::end(), item_cmp); }
   void sort() { std::sort(base_t::begin(), base_t::end(), item_cmp); }
 

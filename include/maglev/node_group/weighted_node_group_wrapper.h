@@ -16,22 +16,7 @@ public:
   WeightedNodeGroupWrapper(double max_avg_rate_limit, Args&&...args) :
       max_avg_rate_limit_(max_avg_rate_limit), base_t(std::forward<Args>(args)...){}
 
-  virtual void ready_go() override { base_t::ready_go(); init(); }
-
-  void init() {
-    weight_sum_ = 0;
-    real_max_weight_ = 0;
-    for (const auto& i : *this) {
-      int w = i->weight();
-      weight_sum_ += w;
-      real_max_weight_ = std::max(real_max_weight_, w);
-    }
-    avg_weight_ = double(weight_sum_) / double(size());
-    if (max_avg_rate_limit_ > 0) {
-      int limit = avg_weight_ * max_avg_rate_limit_;
-      max_weight_ = std::min(real_max_weight_, limit);
-    }
-  }
+  virtual void ready_go() override { base_t::ready_go(); init_weight(); }
 
   void set_max_avg_rate_limit(double r) const { max_avg_rate_limit_ = r; }
 
@@ -45,6 +30,21 @@ public:
   int max_weight() const { return max_weight_; }
 
   int real_max_weight() const { return real_max_weight_; }
+
+  void init_weight() {
+    weight_sum_ = 0;
+    real_max_weight_ = 0;
+    for (const auto& i : *this) {
+      int w = i->weight();
+      weight_sum_ += w;
+      real_max_weight_ = std::max(real_max_weight_, w);
+    }
+    avg_weight_ = double(weight_sum_) / double(size());
+    if (max_avg_rate_limit_ > 0) {
+      int limit = max_avg_rate_limit_ * double(weight_sum_) / double(size());
+      max_weight_ = std::min(real_max_weight_, limit);
+    }
+  }
 
 private:
   // user defined

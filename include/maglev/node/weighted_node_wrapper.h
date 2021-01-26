@@ -14,11 +14,13 @@ class WeightedNodeWrapper: public NodeBaseType {
 
 public:
   template <typename ...Args>
-  WeightedNodeWrapper(int weight, Args&& ...args) : base_t(std::forward<Args>(args)...), weight_(weight) {}
+  WeightedNodeWrapper(int weight, Args&& ...args) : weight_(weight), base_t(std::forward<Args>(args)...) {
+    assert(weight > 0);
+  }
 
   int weight() const { return weight_; }
 
-  void set_weight(int w) { weight_ = w; }
+  void set_weight(int w) { assert(w > 0); weight_ = w; }
 
   virtual std::string to_str() const override;
 
