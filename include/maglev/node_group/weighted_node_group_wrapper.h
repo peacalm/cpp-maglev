@@ -9,7 +9,7 @@ namespace maglev {
 
 
 template <typename NodeGroupBaseType>
-class WeightedNodeGroupWrapper: public NodeGroupBaseType {
+class WeightedNodeGroupWrapper : public NodeGroupBaseType {
   using base_t = NodeGroupBaseType;
 
 public:
@@ -20,11 +20,14 @@ public:
 public:
 
   /// limit max_weight by max_weight <= avg_weight * max_avg_rate_limit, 0 means no limit
-  template<typename ...Args>
-  WeightedNodeGroupWrapper(double max_avg_rate_limit = 0, Args&&...args) :
-      max_avg_rate_limit_(max_avg_rate_limit), base_t(std::forward<Args>(args)...){}
+  template <typename ...Args>
+  WeightedNodeGroupWrapper(double max_avg_rate_limit = 0, Args&& ...args) :
+      max_avg_rate_limit_(max_avg_rate_limit), base_t(std::forward<Args>(args)...) {}
 
-  virtual void ready_go() override { base_t::ready_go(); init_weight(); }
+  virtual void ready_go() override {
+    base_t::ready_go();
+    init_weight();
+  }
 
   void set_max_avg_rate_limit(double r) { max_avg_rate_limit_ = r; }
 

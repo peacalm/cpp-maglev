@@ -9,7 +9,7 @@ namespace maglev {
 
 
 template <typename NodeBaseType>
-class SlotCountedNodeWrapper: public NodeBaseType {
+class SlotCountedNodeWrapper : public NodeBaseType {
   using base_t = NodeBaseType;
 
 public:
@@ -37,8 +37,8 @@ private:
 };
 
 template <typename Char, typename Traits, typename NodeBaseType>
-std::basic_ostream<Char, Traits>& operator << (std::basic_ostream<Char, Traits>& os,
-                                               const SlotCountedNodeWrapper<NodeBaseType>& n) {
+std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
+                                             const SlotCountedNodeWrapper<NodeBaseType>& n) {
   os << "{";
   n.output_members(os);
   os << "}";

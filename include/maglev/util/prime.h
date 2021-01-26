@@ -4,7 +4,7 @@
 namespace maglev {
 
 
-template<typename T, typename V>
+template <typename T, typename V>
 inline constexpr T power(T x, unsigned long long n, V mod) {
   x %= mod;
   T ret = 1;
@@ -24,12 +24,15 @@ inline constexpr bool is_prime(unsigned int n) {
   // form n - 1 = d * 2 ^ r//
   unsigned int d = (n - 1) >> 1;
   unsigned int r = 1;
-  while (~d & 1) { d >>= 1; ++r; }
+  while (~d & 1) {
+    d >>= 1;
+    ++r;
+  }
 
   constexpr unsigned int a[3] = {2, 7, 61};
   for (int i = 0; i < 3; ++i) {
     if (a[i] == n) return true;
-    auto x = power((unsigned long long)(a[i]), d, n);
+    auto x = power((unsigned long long) (a[i]), d, n);
     if (x == 1 || x == n - 1) continue;
     // repeat r-1 times
     for (int k = 1; k < r; ++k) {
@@ -41,7 +44,6 @@ inline constexpr bool is_prime(unsigned int n) {
   }
   return true;
 }
-
 
 
 }  // namespace maglev

@@ -11,12 +11,12 @@ namespace maglev {
 
 
 template <typename NodeBaseType = NodeBase<std::string>>
-class ServerNodeBase: public NodeBaseType {
+class ServerNodeBase : public NodeBaseType {
   using base_t = NodeBaseType;
 
 public:
-  template<typename ...Args>
-  ServerNodeBase(const std::string& ip, int port, Args&&... args) :
+  template <typename ...Args>
+  ServerNodeBase(const std::string& ip, int port, Args&& ...args) :
       ip_(ip), port_(port), base_t(std::forward<Args>(args)...) {}
 
   ServerNodeBase(const std::string& ip, int port) : ip_(ip), port_(port), base_t(make_id(ip, port)) {}
@@ -36,8 +36,8 @@ private:
 };
 
 template <typename Char, typename Traits, typename NodeBaseType>
-std::basic_ostream<Char, Traits>& operator << (std::basic_ostream<Char, Traits>& os,
-                                               const ServerNodeBase<NodeBaseType>& n) {
+std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
+                                             const ServerNodeBase<NodeBaseType>& n) {
   os << "{";
   n.output_members(os);
   os << "}";
@@ -46,12 +46,12 @@ std::basic_ostream<Char, Traits>& operator << (std::basic_ostream<Char, Traits>&
 
 
 template <typename NodeBaseType>
-class VirtualServerNodeBase: public ServerNodeBase<NodeBaseType> {
+class VirtualServerNodeBase : public ServerNodeBase<NodeBaseType> {
   using base_t = ServerNodeBase<NodeBaseType>;
 
 public:
-  template<typename ...Args>
-  VirtualServerNodeBase(const std::string& ip, int port, int vid, Args&&... args) :
+  template <typename ...Args>
+  VirtualServerNodeBase(const std::string& ip, int port, int vid, Args&& ...args) :
       vid_(vid), base_t(ip, port, std::forward<Args>(args)...) {}
 
   VirtualServerNodeBase(const std::string& ip, int port, int vid) :

@@ -73,7 +73,7 @@ public:
     return ret;
   }
 
-  template<typename IntType = num_t>
+  template <typename IntType = num_t>
   std::vector<IntType> gen_permutation() {
     std::vector<IntType> p(n_);
     for (size_t i = 0; i < n_; ++i) p[i] = gen_one_num();
@@ -107,7 +107,10 @@ public:
 
   PermutationGeneratorWithRand(size_t n, hash64_t h, seed_t s) : base_t(n, h), seed_(s) {}
 
-  PermutationGeneratorWithRand& with_rand_seed(seed_t s) { seed_ = s; return *this; }
+  PermutationGeneratorWithRand& with_rand_seed(seed_t s) {
+    seed_ = s;
+    return *this;
+  }
 
   rand_num_t my_rand_max() const { return RAND_MAX; }
 

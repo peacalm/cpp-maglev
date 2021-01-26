@@ -9,7 +9,7 @@ namespace maglev {
 
 
 template <typename NodeBaseType>
-class WeightedNodeWrapper: public NodeBaseType {
+class WeightedNodeWrapper : public NodeBaseType {
   using base_t = NodeBaseType;
 
 public:
@@ -23,7 +23,10 @@ public:
 
   int weight() const { return weight_; }
 
-  void set_weight(int w) { assert(w > 0); weight_ = w; }
+  void set_weight(int w) {
+    assert(w > 0);
+    weight_ = w;
+  }
 
   virtual std::string to_str() const override;
 
@@ -31,13 +34,14 @@ public:
   std::basic_ostream<Char, Traits>& output_members(std::basic_ostream<Char, Traits>& os) const {
     return base_t::output_members(os) << ",w:" << weight();
   }
+
 private:
   int weight_;
 };
 
 template <typename Char, typename Traits, typename NodeBaseType>
-std::basic_ostream<Char, Traits>& operator<< (std::basic_ostream<Char, Traits>& os,
-                                              const WeightedNodeWrapper<NodeBaseType>& n) {
+std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
+                                             const WeightedNodeWrapper<NodeBaseType>& n) {
   os << "{";
   n.output_members(os);
   os << "}";

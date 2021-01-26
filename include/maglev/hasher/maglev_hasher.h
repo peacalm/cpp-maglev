@@ -55,17 +55,21 @@ public:
 
   MaglevHasher() {}
 
-  template<typename NodeGroupT, typename ...Args>
-  MaglevHasher(NodeGroupT&& ng, Args&&...args) :
+  template <typename NodeGroupT, typename ...Args>
+  MaglevHasher(NodeGroupT&& ng, Args&& ...args) :
       node_group_(std::forward<NodeGroupT>(ng)),
       slot_array_(std::forward<Args>(args)...) {}
 
   slot_array_t& slot_array() { return slot_array_; }
+
   const slot_array_t& const_slot_array() const { return slot_array_; }
+
   size_t slot_size() const { return slot_array_.size(); }
 
   node_group_t& node_group() { return node_group_; }
+
   const node_group_t& const_node_group() const { return node_group_; }
+
   size_t node_size() const { return node_group_.size(); }
 
   pick_ret_t pick(size_t hashed_key) const {
@@ -75,7 +79,7 @@ public:
     return ret;
   }
 
-  template<typename KeyType, typename HashType = def_hash_t<KeyType>>
+  template <typename KeyType, typename HashType = def_hash_t<KeyType>>
   pick_ret_t pick_with_auto_hash(const KeyType& key) {
     static auto h = HashType{};
     return pick(h(key));
@@ -86,7 +90,7 @@ public:
     init_node_group();
     auto p = make_perm_gen_array();
     const auto n = node_size();
-    for (size_t node_idx = 0, slot_distributed_cnt = 0; slot_distributed_cnt < slot_size(); ) {
+    for (size_t node_idx = 0, slot_distributed_cnt = 0; slot_distributed_cnt < slot_size();) {
       select_once(p[node_idx], node_idx, slot_distributed_cnt, is_weighted_node_group_t{});
       if (++node_idx >= n) node_idx = 0;
     }
@@ -98,7 +102,7 @@ protected:
   constexpr slot_int_t slot_initial_value() const { return slot_int_t(-1); }
 
   void init_slot_array() {
-    memset((void*)slot_array_.data(), -1, sizeof(slot_int_t) * slot_array_.size());
+    memset((void *) slot_array_.data(), -1, sizeof(slot_int_t) * slot_array_.size());
   }
 
   bool is_slot_distributed(size_t idx) const {
@@ -106,11 +110,12 @@ protected:
   }
 
   void distribut_slot(size_t slot_idx, size_t node_idx, std::true_type) {
-    slot_array_[slot_idx] = (slot_int_t)node_idx;
+    slot_array_[slot_idx] = (slot_int_t) node_idx;
     node_group_[node_idx]->incr_slot_cnt();
   }
+
   void distribut_slot(size_t slot_idx, size_t node_idx, std::false_type) {
-    slot_array_[slot_idx] = (slot_int_t)node_idx;
+    slot_array_[slot_idx] = (slot_int_t) node_idx;
   }
 
   void select_once(perm_gen_t& perm_gen, size_t& node_idx, size_t& slot_distributed_cnt, std::true_type) {

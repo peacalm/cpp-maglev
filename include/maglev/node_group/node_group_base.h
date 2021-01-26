@@ -27,10 +27,11 @@ public:
   virtual void ready_go() { if (!is_sorted()) sort(); }
 
   bool is_sorted() const { return std::is_sorted(base_t::begin(), base_t::end(), item_cmp); }
+
   void sort() { std::sort(base_t::begin(), base_t::end(), item_cmp); }
 
-  template<typename ...Args>
-  static node_ptr_t new_node(Args&&... args) {
+  template <typename ...Args>
+  static node_ptr_t new_node(Args&& ...args) {
     return std::make_shared<node_t>(std::forward<Args>(args)...);
   }
 
@@ -48,7 +49,8 @@ public:
     return *l < *r;
   }
 
-  template <typename Function> void for_each(Function f) {
+  template <typename Function>
+  void for_each(Function f) {
     for (auto& i : *this) f(i);
   }
 

@@ -10,7 +10,7 @@ namespace maglev {
 
 
 template <typename IntType = int, size_t SlotNum = 65537>
-class SlotArray: public std::array<IntType, SlotNum> {
+class SlotArray : public std::array<IntType, SlotNum> {
   using base_t = std::array<IntType, SlotNum>;
 
 public:
@@ -19,7 +19,7 @@ public:
 
 
 template <typename IntType = int>
-class SlotVector: public std::vector<IntType> {
+class SlotVector : public std::vector<IntType> {
   using base_t = std::vector<IntType>;
   using size_type = typename base_t::size_type;
   using const_reference = typename base_t::const_reference;
@@ -29,10 +29,18 @@ public:
 
 public:
   SlotVector() {}
+
   SlotVector(size_type n) : base_t(n) { assert(is_prime(n)); }
 
-  void resize(size_type n) { assert(is_prime(n)); base_t::resize(n); }
-  void resize(size_type n, const_reference v) { assert(is_prime(n)); base_t::resize(n, v); }
+  void resize(size_type n) {
+    assert(is_prime(n));
+    base_t::resize(n);
+  }
+
+  void resize(size_type n, const_reference v) {
+    assert(is_prime(n));
+    base_t::resize(n, v);
+  }
 
 };
 
