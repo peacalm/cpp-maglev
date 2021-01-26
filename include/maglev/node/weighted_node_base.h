@@ -18,6 +18,8 @@ public:
 
   int weight() const { return weight_; }
 
+  void set_weight(int w) { weight_ = w; }
+
   virtual std::string to_str() const override;
 
   template <typename Char, typename Traits>

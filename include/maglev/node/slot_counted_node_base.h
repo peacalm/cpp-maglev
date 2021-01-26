@@ -20,6 +20,8 @@ public:
 
   int slot_cnt() const { return slot_cnt_; }
 
+  void set_slot_cnt(int s) { slot_cnt_ = s; }
+
   virtual std::string to_str() const override;
 
   template <typename Char, typename Traits>
