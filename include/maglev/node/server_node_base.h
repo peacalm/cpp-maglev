@@ -8,7 +8,7 @@
 #include "node_base.h"
 
 namespace maglev {
-namespace node {
+
 
 template <typename NodeBaseType = NodeBase<std::string>>
 class ServerNodeBase: public NodeBaseType {
@@ -67,5 +67,4 @@ private:
 };
 
 
-}  // namespace node
 }  // namespace maglev

@@ -8,7 +8,6 @@
 #include "maglev/util/prime.h"
 
 namespace maglev {
-namespace permutation {
 
 
 /**
@@ -84,7 +83,7 @@ public:
 private:
   void assert_n() {
     assert(n_ > 1);
-    assert(util::is_prime(n_));
+    assert(is_prime(n_));
   }
 
 private:
@@ -120,5 +119,5 @@ private:
   mutable seed_t seed_;
 };
 
-}  // namespace permutation
+
 }  // namespace maglev

@@ -3,7 +3,7 @@
 #include <utility>
 
 namespace maglev {
-namespace node_group {
+
 
 template <typename NodeGroupBaseType>
 class WeightedNodeGroupWrapper: public NodeGroupBaseType {
@@ -56,5 +56,5 @@ private:
   double avg_weight_ = 0;
 };
 
-}  // namespace node_group
+
 }  // namespace maglev

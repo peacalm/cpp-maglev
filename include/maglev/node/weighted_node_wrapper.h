@@ -6,7 +6,7 @@
 #include <utility>
 
 namespace maglev {
-namespace node {
+
 
 template <typename NodeBaseType>
 class WeightedNodeWrapper: public NodeBaseType {
@@ -49,5 +49,4 @@ std::string WeightedNodeWrapper<NodeBaseType>::to_str() const {
 }
 
 
-}  // namespace node
 }  // namespace maglev

@@ -6,7 +6,7 @@
 #include <utility>
 
 namespace maglev {
-namespace node {
+
 
 template <typename NodeBaseType>
 class SlotCountedNodeWrapper: public NodeBaseType {
@@ -53,5 +53,4 @@ std::string SlotCountedNodeWrapper<NodeBaseType>::to_str() const {
 }
 
 
-}  // namespace node
 }  // namespace maglev

@@ -7,7 +7,6 @@
 #include "maglev/util/prime.h"
 
 namespace maglev {
-namespace hasher {
 
 
 template <typename IntType = int, size_t SlotNum = 65537>
@@ -15,7 +14,7 @@ class SlotArray: public std::array<IntType, SlotNum> {
   using base_t = std::array<IntType, SlotNum>;
 
 public:
-  using int_t = typename std::enable_if<std::is_integral<IntType>::value && util::is_prime(SlotNum), IntType>::type;
+  using int_t = typename std::enable_if<std::is_integral<IntType>::value && is_prime(SlotNum), IntType>::type;
 };
 
 
@@ -30,13 +29,12 @@ public:
 
 public:
   SlotVector() {}
-  SlotVector(size_type n) : base_t(n) { assert(util::is_prime(n)); }
+  SlotVector(size_type n) : base_t(n) { assert(is_prime(n)); }
 
-  void resize(size_type n) { assert(util::is_prime(n)); base_t::resize(n); }
-  void resize(size_type n, const_reference v) { assert(util::is_prime(n)); base_t::resize(n, v); }
+  void resize(size_type n) { assert(is_prime(n)); base_t::resize(n); }
+  void resize(size_type n, const_reference v) { assert(is_prime(n)); base_t::resize(n, v); }
 
 };
 
 
-}  // namespace hasher
 }  // namespace maglev

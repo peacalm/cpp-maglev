@@ -14,13 +14,12 @@
 #include "maglev/util/type_traits.h"
 
 namespace maglev {
-namespace hasher {
 
 
 template <
     typename SlotArrayType = SlotArray<int>,
-    typename NodeGroupType = node_group::NodeGroupBase<node::NodeBase<>>,
-    typename PermutationGeneratorType = permutation::PermutationGenerator
+    typename NodeGroupType = NodeGroupBase<NodeBase<>>,
+    typename PermutationGeneratorType = PermutationGenerator
 >
 class MaglevHasher {
 public:
@@ -67,7 +66,7 @@ public:
     return ret;
   }
 
-  template<typename KeyType, typename HashType = util::def_hash_t<KeyType>>
+  template<typename KeyType, typename HashType = def_hash_t<KeyType>>
   pick_ret_t pick_with_auto_hash(const KeyType& key) {
     static auto h = HashType{};
     return pick(h(key));
@@ -135,5 +134,4 @@ private:
 };
 
 
-}  // namespace hasher
 }  // namespace maglev

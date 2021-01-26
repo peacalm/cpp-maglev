@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace maglev {
-namespace node_group {
+
 
 template <typename NodeType>
 class NodeGroupBase : public std::vector<std::shared_ptr<NodeType>> {
@@ -54,5 +54,5 @@ public:
 
 };
 
-}  // namespace node_group
+
 }  // namespace maglev

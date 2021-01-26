@@ -21,4 +21,5 @@ struct node_has_slot_counted<NodeT, to_void_t<typename NodeT::slot_counted_t>> :
 template <typename NodeT>
 using node_has_slot_counted_t = typename node_has_slot_counted<NodeT>::type;
 
+
 }  // namespace maglev
