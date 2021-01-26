@@ -13,6 +13,9 @@ class SlotCountedNodeWrapper: public NodeBaseType {
   using base_t = NodeBaseType;
 
 public:
+  using slot_counted_t = void;  // for type_trait
+
+public:
   template <typename ...Args>
   SlotCountedNodeWrapper(Args&& ...id) : base_t(std::forward<Args>(id)...), slot_cnt_(0) {}
 

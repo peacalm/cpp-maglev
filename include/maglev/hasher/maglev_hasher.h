@@ -11,6 +11,7 @@
 #include "maglev/node_group/node_group_base.h"
 #include "maglev/permutation/permutation_generator.h"
 #include "maglev/util/hash.h"
+#include "maglev/util/type_traits.h"
 
 namespace maglev {
 namespace hasher {
@@ -25,9 +26,9 @@ class MaglevHasher {
 public:
   using slot_array_t = SlotArrayType;
   using slot_int_t = typename slot_array_t::int_t;
-  using node_group_t = NodeGroupType;
   using perm_gen_t = PermutationGeneratorType;
   using perm_gen_array_t = std::vector<perm_gen_t>;
+  using node_group_t = NodeGroupType;
   using node_t = typename node_group_t::node_t;
   using node_ptr_t = typename node_group_t::node_ptr_t;
   using node_group_item_t = typename node_group_t::item_t;
@@ -38,6 +39,9 @@ public:
     size_t node_idx = 0;
   };
   using pick_ret_t = PickRet;
+
+protected:
+  using my_node_has_slot_counted_t = node_has_slot_counted_t<node_t>;
 
 public:
 
@@ -93,7 +97,11 @@ protected:
     return slot_array_[idx] != slot_initial_value();
   }
 
-  void distribut_slot(size_t slot_idx, size_t node_idx) {
+  void distribut_slot(size_t slot_idx, size_t node_idx, std::true_type) {
+    slot_array_[slot_idx] = (slot_int_t)node_idx;
+    node_group_[node_idx]->incr_slot_cnt();
+  }
+  void distribut_slot(size_t slot_idx, size_t node_idx, std::false_type) {
     slot_array_[slot_idx] = (slot_int_t)node_idx;
   }
 
@@ -101,7 +109,7 @@ protected:
     while (true) {
       auto t = perm_gen.gen_one_num();
       if (!is_slot_distributed(t)) {
-        distribut_slot(t, node_idx);
+        distribut_slot(t, node_idx, my_node_has_slot_counted_t{});
         ++slot_distributed_cnt;
         break;
       }
