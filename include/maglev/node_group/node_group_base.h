@@ -15,9 +15,9 @@ class NodeGroupBase : public std::vector<std::shared_ptr<NodeType>> {
 public:
   using node_t = NodeType;
   using node_ptr_t = std::shared_ptr<node_t>;
-  using item_t = node_ptr_t;
   using node_id_t = typename node_t::node_id_t;
   using node_map_t = std::unordered_map<node_id_t, const node_ptr_t>;
+  using item_t = node_ptr_t;
 
 private:
   using base_t = std::vector<item_t>;
