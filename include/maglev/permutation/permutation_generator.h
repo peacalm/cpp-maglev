@@ -68,6 +68,7 @@ public:
 
   num_t gen_one_num() {
     num_t ret = offset_;
+    assert(ret >= 0);
     assert(ret < n_);
     offset_ = (offset_ + step_) % n_;
     return ret;
