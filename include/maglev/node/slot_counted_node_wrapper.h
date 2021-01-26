@@ -9,12 +9,12 @@ namespace maglev {
 namespace node {
 
 template <typename NodeBaseType>
-class SlotCountedNodeBase: public NodeBaseType {
+class SlotCountedNodeWrapper: public NodeBaseType {
   using base_t = NodeBaseType;
 
 public:
   template <typename ...Args>
-  SlotCountedNodeBase(Args&& ...id) : base_t(std::forward<Args>(id)...), slot_cnt_(0) {}
+  SlotCountedNodeWrapper(Args&& ...id) : base_t(std::forward<Args>(id)...), slot_cnt_(0) {}
 
   void incr_slot_cnt(int d = 1) { slot_cnt_ += d; }
 
@@ -35,7 +35,7 @@ private:
 
 template <typename Char, typename Traits, typename NodeBaseType>
 std::basic_ostream<Char, Traits>& operator << (std::basic_ostream<Char, Traits>& os,
-                                               const SlotCountedNodeBase<NodeBaseType>& n) {
+                                               const SlotCountedNodeWrapper<NodeBaseType>& n) {
   os << "{";
   n.output_members(os);
   os << "}";
@@ -43,7 +43,7 @@ std::basic_ostream<Char, Traits>& operator << (std::basic_ostream<Char, Traits>&
 }
 
 template <typename NodeBaseType>
-std::string SlotCountedNodeBase<NodeBaseType>::to_str() const {
+std::string SlotCountedNodeWrapper<NodeBaseType>::to_str() const {
   std::ostringstream os;
   os << *this;
   return os.str();

@@ -5,10 +5,12 @@
 #include <type_traits>
 #include <utility>
 
+#include "node_base.h"
+
 namespace maglev {
 namespace node {
 
-template <typename NodeBaseType>
+template <typename NodeBaseType = NodeBase<std::string>>
 class ServerNodeBase: public NodeBaseType {
   using base_t = NodeBaseType;
 
