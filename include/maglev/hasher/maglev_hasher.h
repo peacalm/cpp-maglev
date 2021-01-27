@@ -26,7 +26,9 @@ template <
         NodeGroupBase<NodeType>
     >::type,
     typename PermutationGeneratorType = typename std::conditional<
-        is_weighted_t<NodeGroupType>::value, PermutationGeneratorWithRand, PermutationGenerator
+        is_weighted_t<NodeGroupType>::value,
+        PermutationGeneratorWithRand,
+        PermutationGenerator
     >::type
 >
 class MaglevHasher {
