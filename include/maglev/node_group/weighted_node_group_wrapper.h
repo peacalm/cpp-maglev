@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include <type_traits>
 #include <utility>
 
@@ -61,6 +63,10 @@ public:
         max_weight_ = limit;
       }
     }
+    assert(real_max_weight_ > 0);
+    assert(max_weight_ > 0);
+    assert(weight_sum_ > 0);
+    assert(avg_weight_ > 0);
   }
 
 private:
