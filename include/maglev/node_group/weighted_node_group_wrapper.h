@@ -45,6 +45,8 @@ public:
 
   int real_max_weight() const { return real_max_weight_; }
 
+  bool max_weight_limited() const { return max_weight() < real_max_weight(); }
+
   void init_weight() {
     weight_sum_ = 0;
     real_max_weight_ = 0;
