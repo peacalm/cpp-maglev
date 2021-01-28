@@ -34,7 +34,11 @@ public:
   }
 
   template <typename ...Args>
-  void new_back(Args&& ...args) { base_t::push_back(this->new_node(std::forward<Args>(args)...)); }
+  node_ptr_t new_back(Args&& ...args) {
+    auto new_node_ptr = this->new_node(std::forward<Args>(args)...);
+    base_t::push_back(new_node_ptr);
+    return new_node_ptr;
+  }
 
   node_map_t make_node_map() const {
     node_map_t ret;
