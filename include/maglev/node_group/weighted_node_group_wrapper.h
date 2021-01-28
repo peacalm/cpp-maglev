@@ -48,6 +48,8 @@ public:
   bool max_weight_limited() const { return max_weight() < real_max_weight(); }
 
   void init_weight() {
+    if (base_t::empty()) return;
+
     weight_sum_ = 0;
     real_max_weight_ = 0;
     for (const auto& i : *this) {
@@ -82,4 +84,20 @@ private:
 };
 
 
+template <typename Char, typename Traits, typename NodeGroupBaseType>
+std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
+                                             const WeightedNodeGroupWrapper<NodeGroupBaseType>& wng) {
+  os << "{" << static_cast<const NodeGroupBaseType&>(wng)
+     << ",sz:" << wng.size()
+     << ",w_sum:" << wng.weight_sum()
+     << ",avg_w:" << wng.avg_weight()
+     << ",max_w:" << wng.max_weight();
+  if (wng.max_weight_limited()) {
+    os << "<" << wng.real_max_weight();
+  } else {
+    os << "=";
+  }
+  os << ",w_lmt:" << wng.max_avg_rate_limit() << "}";
+  return os;
+}
 }  // namespace maglev
