@@ -7,6 +7,7 @@ namespace maglev {
 
 template <typename IntType = long long>
 struct MaglevIntHash {
+  static_assert(std::is_integral<IntType>::value, "MaglevIntHash only support integral types");
   using type = typename std::enable_if<std::is_integral<IntType>::value, IntType>::type;
 
   size_t operator()(type n) const {
