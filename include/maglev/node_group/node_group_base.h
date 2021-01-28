@@ -57,4 +57,17 @@ public:
 };
 
 
+template <typename Char, typename Traits, typename NodeType, typename ContainerType>
+std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
+                                             const NodeGroupBase<NodeType, ContainerType>& ng) {
+  os << "[";
+  for (size_t i = 0; i < ng.size(); ++i) {
+    if (i > 0) os << ",";
+    os << *ng[i];
+  }
+  os << "]";
+  return os;
+}
+
+
 }  // namespace maglev
