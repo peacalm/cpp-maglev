@@ -100,4 +100,6 @@ std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& o
   os << ",w_lmt:" << wng.max_avg_rate_limit() << "}";
   return os;
 }
+
+
 }  // namespace maglev
