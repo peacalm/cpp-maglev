@@ -15,7 +15,7 @@ namespace maglev {
  * NOTICE: n must be a prime number and n > 1
  */
 class PermutationGenerator {
-protected:
+public:
   using hash64_t = unsigned long long;
   using num_t = unsigned int;
 
@@ -94,10 +94,12 @@ private:
 
 
 class PermutationGeneratorWithRand : public PermutationGenerator {
-protected:
   using base_t = PermutationGenerator;
+
+public:
   using seed_t = unsigned int;
   using rand_num_t = int;
+  using hash64_t = typename base_t::hash64_t;
 
 public:
   PermutationGeneratorWithRand(size_t n) : base_t(n), seed_(0) {}
