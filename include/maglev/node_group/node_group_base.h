@@ -13,6 +13,7 @@ namespace maglev {
 template <typename NodeType, typename ContainerType = std::vector<std::shared_ptr<NodeType>>>
 class NodeGroupBase : public ContainerType {
   using base_t = ContainerType;
+
 public:
   using node_t = NodeType;
   using node_ptr_t = std::shared_ptr<node_t>;
