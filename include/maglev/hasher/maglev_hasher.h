@@ -62,15 +62,15 @@ public:
       node_group_(std::forward<NodeGroupT>(ng)),
       slot_array_(std::forward<Args>(args)...) {}
 
-  slot_array_t& slot_array() { return slot_array_; }
+  slot_array_t& mutable_slot_array() { return slot_array_; }
 
-  const slot_array_t& const_slot_array() const { return slot_array_; }
+  const slot_array_t& slot_array() const { return slot_array_; }
 
   size_t slot_size() const { return slot_array_.size(); }
 
-  node_group_t& node_group() { return node_group_; }
+  node_group_t& mutable_node_group() { return node_group_; }
 
-  const node_group_t& const_node_group() const { return node_group_; }
+  const node_group_t& node_group() const { return node_group_; }
 
   size_t node_size() const { return node_group_.size(); }
 
