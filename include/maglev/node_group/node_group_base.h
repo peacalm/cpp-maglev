@@ -45,8 +45,7 @@ public:
   }
 
   static bool item_cmp(const item_t& l, const item_t& r) {
-    assert(l);
-    assert(r);
+    assert(l && r);
     return *l < *r;
   }
 
