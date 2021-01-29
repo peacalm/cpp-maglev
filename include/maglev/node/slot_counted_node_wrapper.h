@@ -17,7 +17,7 @@ public:
 
 public:
   template <typename ...Args>
-  SlotCountedNodeWrapper(Args&& ...id) : slot_cnt_(0), base_t(std::forward<Args>(id)...) {}
+  SlotCountedNodeWrapper(Args&& ...args) : slot_cnt_(0), base_t(std::forward<Args>(args)...) {}
 
   void incr_slot_cnt(int d = 1) { slot_cnt_ += d; }
 
