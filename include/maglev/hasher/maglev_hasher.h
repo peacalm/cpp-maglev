@@ -122,7 +122,7 @@ protected:
 
   void select_once(perm_gen_t& perm_gen, size_t& node_idx, size_t& slot_distributed_cnt, std::true_type) {
     auto& node = node_group_[node_idx];
-    bool slected = 1ULL * perm_gen.my_rand() * node_group_.max_weight() <
+    bool slected = 1ULL * perm_gen.my_rand() * node_group_.max_weight() <=
                    1ULL * node->weight() * perm_gen.my_rand_max();
     if (slected) {
       select_once(perm_gen, node_idx, slot_distributed_cnt, std::false_type{});
