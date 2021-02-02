@@ -42,11 +42,13 @@ public:
   using node_ptr_t = typename node_group_t::node_ptr_t;
   using node_group_item_t = typename node_group_t::item_t;
 
-public:
+private:
   struct PickRet {
     node_group_item_t node;
     size_t node_idx = 0;
   };
+
+public:
   using pick_ret_t = PickRet;
 
 protected:
