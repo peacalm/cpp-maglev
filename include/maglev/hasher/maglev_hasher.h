@@ -19,7 +19,7 @@ namespace maglev {
 
 template <
     typename SlotArrayType = SlotArray<int>,
-    typename NodeType = NodeBase<>,
+    typename NodeType = NodeBase<std::string>,
     typename NodeGroupType = typename std::conditional<
         is_weighted<NodeType>::value,
         WeightedNodeGroupWrapper<NodeGroupBase<NodeType>>,
