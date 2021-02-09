@@ -22,6 +22,10 @@ public:
   template <typename ...Args>
   NodeBase(Args&& ...args) : id_(std::forward<Args>(args)...) {}
 
+  NodeBase(const node_id_t& id) : id_(id) {}
+
+  NodeBase(node_id_t&& id) : id_(std::move(id)) {}
+
   node_id_t id() const { return id_; }
 
   size_t id_hash() const { return hash_t{}(id()); }
