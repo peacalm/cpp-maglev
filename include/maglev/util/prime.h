@@ -16,7 +16,7 @@ inline constexpr T power(T x, unsigned long long n, V mod) {
   return ret;
 }
 
-// MillerRabin prime test for n < 4,759,123,141, (4,759,123,141 > 4 294 967 295)
+// MillerRabin prime test for n < 4,759,123,141 (4,759,123,141 > 4,294,967,295)
 inline constexpr bool is_prime(unsigned int n) {
   if (n == 2) return true;
   if ((~n & 1) || n == 1) return false;
