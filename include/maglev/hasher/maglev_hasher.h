@@ -21,7 +21,7 @@ template <
     typename SlotArrayType = SlotArray<int>,
     typename NodeType = NodeBase<std::string>,
     typename NodeGroupType = typename std::conditional<
-        is_weighted<NodeType>::value,
+        is_weighted_t<NodeType>::value,
         WeightedNodeGroupWrapper<NodeGroupBase<NodeType>>,
         NodeGroupBase<NodeType>
     >::type,
