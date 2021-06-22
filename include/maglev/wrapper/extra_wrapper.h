@@ -7,6 +7,7 @@
 
 namespace maglev {
 
+
 template <typename BaseType, typename MapType = std::map<std::string, std::string>>
 class ExtraWrapper : public BaseType {
   using base_t = BaseType;
