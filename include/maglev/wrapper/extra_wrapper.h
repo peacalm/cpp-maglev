@@ -44,7 +44,9 @@ public:
 
   extra_t& extra() { return extra_; }
 
-  virtual std::string to_str() const override;
+  virtual std::string to_str() const override {
+    return (std::ostringstream{} << *this).str();
+  }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_members(std::basic_ostream<Char, Traits>& os) const {
@@ -71,11 +73,5 @@ std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& o
   return os;
 }
 
-template <typename BaseType, typename MapType>
-std::string ExtraWrapper<BaseType, MapType>::to_str() const {
-  std::ostringstream os;
-  os << *this;
-  return os.str();
-}
 
 }  // namespace maglev
