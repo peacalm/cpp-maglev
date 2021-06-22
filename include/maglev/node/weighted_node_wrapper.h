@@ -28,7 +28,9 @@ public:
     weight_ = w;
   }
 
-  virtual std::string to_str() const override;
+  virtual std::string to_str() const override {
+    return (std::ostringstream{} << *this).str();
+  }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_members(std::basic_ostream<Char, Traits>& os) const {
@@ -46,13 +48,6 @@ std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& o
   n.output_members(os);
   os << "}";
   return os;
-}
-
-template <typename NodeBaseType>
-std::string WeightedNodeWrapper<NodeBaseType>::to_str() const {
-  std::ostringstream os;
-  os << *this;
-  return os.str();
 }
 
 
