@@ -16,8 +16,8 @@ struct MaglevIntHash {
     x = (x ^ (x >> 27)) * 0x94d049bb133111ebull;
     x = x ^ (x >> 31);
     // Here hack 0 to 0x9e3779b97f4a7c16ull to ensure final hash result is 
-    // always non-zero! Notice this will make input n = 0 conflict with input 
-    // n = 4440575067278254172ull, but the latter is not a frequently used 
+    // always non-zero! Notice this will make a hash collision by input n = 0
+    // and n = 4440575067278254172ull, but the latter is not a frequently used
     // number, so it's not a big problem.
     return x != 0 ? x : 0x9e3779b97f4a7c16ull;
   }
