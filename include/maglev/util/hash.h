@@ -25,7 +25,7 @@ struct MaglevIntHash {
 
 
 // std::hash for integer got self, which may cause bad performance in maglev,
-// so use MaglevIntHash as default. Or you can specify your own hash method.
+// so use MaglevIntHash as default.
 template <typename T>
 using def_hash_t = typename std::conditional<std::is_integral<T>::value,
     MaglevIntHash<typename std::conditional<std::is_integral<T>::value, T, long long>::type>,
