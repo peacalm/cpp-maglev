@@ -18,9 +18,9 @@ public:
 };
 
 
-template <typename IntType = int>
-class SlotVector : public std::vector<IntType> {
-  using base_t = std::vector<IntType>;
+template <typename IntType = int, typename AllocType = std::allocator<IntType>>
+class SlotVector : public std::vector<IntType, AllocType> {
+  using base_t = std::vector<IntType, AllocType>;
   using size_type = typename base_t::size_type;
   using const_reference = typename base_t::const_reference;
 
