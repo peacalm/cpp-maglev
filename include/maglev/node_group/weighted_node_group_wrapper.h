@@ -54,7 +54,8 @@ public:
 
   double avg_weight() const { return avg_weight_; }
 
-  // limited max weight, which is really used in maglev
+  // limited max weight, which is really used in maglev_hasher but not
+  // real_max_weight()
   int max_weight() const { return max_weight_; }
 
   int real_max_weight() const { return real_max_weight_; }
@@ -78,10 +79,6 @@ public:
                       double(base_t::size()));
       if (max_weight_ > limit) { max_weight_ = limit; }
     }
-    assert(real_max_weight_ > 0);
-    assert(max_weight_ > 0);
-    assert(weight_sum_ > 0);
-    assert(avg_weight_ > 0);
   }
 
 private:

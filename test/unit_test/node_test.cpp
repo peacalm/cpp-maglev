@@ -90,8 +90,7 @@ TEST(node, complex) {
   n3.set_slot_cnt(13);
   n3.set_weight(20);
 
-  maglev::extra_wrapper<
-  maglev::weighted_node_wrapper<
+  maglev::extra_wrapper<maglev::weighted_node_wrapper<
       maglev::slot_counted_node_wrapper<maglev::server_node_base<>>>>
       n4("10.0.0.1", 88);
   n4.set_slot_cnt(13);
