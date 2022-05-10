@@ -24,7 +24,7 @@ namespace maglev {
 
 template <typename NodeType,
           typename ContainerType = std::vector<std::shared_ptr<NodeType>>>
-class node_group_base : public ContainerType {
+class node_manager_base : public ContainerType {
   using base_t = ContainerType;
 
 public:
@@ -79,12 +79,12 @@ template <typename Char,
           typename NodeType,
           typename ContainerType>
 std::basic_ostream<Char, Traits>& operator<<(
-    std::basic_ostream<Char, Traits>&               os,
-    const node_group_base<NodeType, ContainerType>& ng) {
+    std::basic_ostream<Char, Traits>&                 os,
+    const node_manager_base<NodeType, ContainerType>& nm) {
   os << "[";
-  for (size_t i = 0; i < ng.size(); ++i) {
+  for (size_t i = 0; i < nm.size(); ++i) {
     if (i > 0) os << ",";
-    os << *ng[i];
+    os << *nm[i];
   }
   os << "]";
   return os;

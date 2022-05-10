@@ -21,50 +21,50 @@
 
 #include "maglev/hasher/slot_array.h"
 #include "maglev/node/node_base.h"
-#include "maglev/node_group/node_group_base.h"
-#include "maglev/node_group/weighted_node_group_wrapper.h"
+#include "maglev/node_manager/node_manager_base.h"
+#include "maglev/node_manager/weighted_node_manager_wrapper.h"
 #include "maglev/permutation/permutation_generator.h"
 #include "maglev/util/hash.h"
 #include "maglev/util/type_traits.h"
 
 namespace maglev {
 
-template <typename SlotArrayType = slot_array<int>,
-          typename NodeType      = node_base<std::string>,
-          typename NodeGroupType = typename std::conditional<
+template <typename SlotArrayType   = slot_array<int>,
+          typename NodeType        = node_base<std::string>,
+          typename NodeManagerType = typename std::conditional<
               is_weighted_t<NodeType>::value,
-              weighted_node_group_wrapper<node_group_base<NodeType>>,
-              node_group_base<NodeType>>::type,
+              weighted_node_manager_wrapper<node_manager_base<NodeType>>,
+              node_manager_base<NodeType>>::type,
           typename PermutationGeneratorType =
-              typename std::conditional<is_weighted_t<NodeGroupType>::value,
+              typename std::conditional<is_weighted_t<NodeManagerType>::value,
                                         permutation_generator_with_rand,
                                         permutation_generator>::type>
 class maglev_hasher {
 public:
-  using slot_array_t      = SlotArrayType;
-  using slot_int_t        = typename slot_array_t::int_t;
-  using perm_gen_t        = PermutationGeneratorType;
-  using perm_gen_array_t  = std::vector<perm_gen_t>;
-  using node_group_t      = NodeGroupType;
-  using node_t            = typename node_group_t::node_t;
-  using node_ptr_t        = typename node_group_t::node_ptr_t;
-  using node_group_item_t = typename node_group_t::item_t;
+  using slot_array_t        = SlotArrayType;
+  using slot_int_t          = typename slot_array_t::int_t;
+  using perm_gen_t          = PermutationGeneratorType;
+  using perm_gen_array_t    = std::vector<perm_gen_t>;
+  using node_manager_t      = NodeManagerType;
+  using node_t              = typename node_manager_t::node_t;
+  using node_ptr_t          = typename node_manager_t::node_ptr_t;
+  using node_manager_item_t = typename node_manager_t::item_t;
 
   struct pick_ret_t {
-    node_group_item_t node;
-    size_t            node_idx = 0;
+    node_manager_item_t node;
+    size_t              node_idx = 0;
   };
 
 protected:
-  using is_slot_counted_node_t   = is_slot_counted_t<node_t>;
-  using is_weighted_node_group_t = is_weighted_t<node_group_t>;
+  using is_slot_counted_node_t     = is_slot_counted_t<node_t>;
+  using is_weighted_node_manager_t = is_weighted_t<node_manager_t>;
 
 public:
   maglev_hasher() {}
 
-  template <typename NodeGroupT, typename... Args>
-  maglev_hasher(NodeGroupT&& ng, Args&&... args)
-      : node_group_(std::forward<NodeGroupT>(ng)),
+  template <typename NodeManagerT, typename... Args>
+  maglev_hasher(NodeManagerT&& nm, Args&&... args)
+      : node_manager_(std::forward<NodeManagerT>(nm)),
         slot_array_(std::forward<Args>(args)...) {}
 
   slot_array_t& mutable_slot_array() { return slot_array_; }
@@ -73,16 +73,16 @@ public:
 
   size_t slot_size() const { return slot_array_.size(); }
 
-  node_group_t& mutable_node_group() { return node_group_; }
+  node_manager_t& mutable_node_manager() { return node_manager_; }
 
-  const node_group_t& node_group() const { return node_group_; }
+  const node_manager_t& node_manager() const { return node_manager_; }
 
-  size_t node_size() const { return node_group_.size(); }
+  size_t node_size() const { return node_manager_.size(); }
 
   pick_ret_t pick(size_t hashed_key) const {
     pick_ret_t ret;
     ret.node_idx = slot_array_[hashed_key % slot_size()];
-    ret.node     = node_group_[ret.node_idx];
+    ret.node     = node_manager_[ret.node_idx];
     return ret;
   }
 
@@ -94,7 +94,7 @@ public:
 
   void build() {
     init_slot_array();
-    init_node_group();
+    init_node_manager();
     auto       p = make_perm_gen_array();
     const auto n = node_size();
     for (size_t node_idx = 0, slot_distributed_cnt = 0;
@@ -102,13 +102,13 @@ public:
       select_once(p[node_idx],
                   node_idx,
                   slot_distributed_cnt,
-                  is_weighted_node_group_t{});
+                  is_weighted_node_manager_t{});
       if (++node_idx >= n) node_idx = 0;
     }
   }
 
 protected:
-  void init_node_group() { node_group_.ready_go(); }
+  void init_node_manager() { node_manager_.ready_go(); }
 
   constexpr slot_int_t slot_initial_value() const { return slot_int_t(-1); }
 
@@ -123,7 +123,7 @@ protected:
 
   void distribut_slot(size_t slot_idx, size_t node_idx, std::true_type) {
     slot_array_[slot_idx] = (slot_int_t)node_idx;
-    node_group_[node_idx]->incr_slot_cnt();
+    node_manager_[node_idx]->incr_slot_cnt();
   }
 
   void distribut_slot(size_t slot_idx, size_t node_idx, std::false_type) {
@@ -134,9 +134,10 @@ protected:
                    size_t&     node_idx,
                    size_t&     slot_distributed_cnt,
                    std::true_type) {
-    auto& node    = node_group_[node_idx];
-    bool  slected = 1ULL * perm_gen.my_rand() * node_group_.max_weight() <=
-                   1ULL * node->weight() * perm_gen.my_rand_max();
+    auto& node = node_manager_[node_idx];
+    bool  slected =
+        1ULL * perm_gen.my_rand() * node_manager_.limited_max_weight() <=
+        1ULL * node->weight() * perm_gen.my_rand_max();
     if (slected) {
       select_once(perm_gen, node_idx, slot_distributed_cnt, std::false_type{});
     }
@@ -163,13 +164,13 @@ protected:
   perm_gen_array_t make_perm_gen_array() const {
     perm_gen_array_t p;
     p.reserve(node_size());
-    for (const auto& i : node_group_) { p.push_back(make_a_perm_gen(i)); }
+    for (const auto& i : node_manager_) { p.push_back(make_a_perm_gen(i)); }
     return p;
   }
 
 private:
-  slot_array_t slot_array_;
-  node_group_t node_group_;
+  slot_array_t   slot_array_;
+  node_manager_t node_manager_;
 };
 
 }  // namespace maglev
