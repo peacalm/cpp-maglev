@@ -90,5 +90,14 @@ TEST(node, complex) {
   n3.set_slot_cnt(13);
   n3.set_weight(20);
 
-  std::cout << "complex node: " << n1 << n2 << n3 << std::endl;
+  maglev::extra_wrapper<
+  maglev::weighted_node_wrapper<
+      maglev::slot_counted_node_wrapper<maglev::server_node_base<>>>>
+      n4("10.0.0.1", 88);
+  n4.set_slot_cnt(13);
+  n4.set_weight(20);
+  n4.extra_set("type", "special");
+  n4.extra_set("feature", "666");
+
+  std::cout << "complex node: " << n1 << n2 << n3 << n4 << std::endl;
 }
