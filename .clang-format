@@ -1,0 +1,21 @@
+Language:     Cpp
+BasedOnStyle: Google
+
+AccessModifierOffset: -2
+#ColumnLimit: 80
+
+AlignConsecutiveAssignments:  true
+AlignConsecutiveBitFields:    true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros:       true
+
+AllowShortBlocksOnASingleLine:       Always
+AllowShortCaseLabelsOnASingleLine:   true
+AllowShortEnumsOnASingleLine:        true
+AllowShortFunctionsOnASingleLine:    All
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine:      All
+AllowShortLoopsOnASingleLine:        true
+
+BinPackArguments:  false
+BinPackParameters: false
