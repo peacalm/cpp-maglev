@@ -14,7 +14,6 @@
 
 #include "unit_test.h"
 
-
 TEST(wrapper, extra_wrapper) {
   maglev::extra_wrapper<maglev::node_base<>> n("string-type-node-id");
   n.extra_set("ip", "1.1.1.1");
