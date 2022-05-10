@@ -65,7 +65,6 @@ TEST(util, type_traits) {
   EXPECT_TRUE(maglev::is_slot_counted<slot_counted_void>::type::value);
   EXPECT_FALSE(maglev::is_slot_counted<slot_counted_bool>::type::value);
 
-
   EXPECT_FALSE(maglev::is_weighted_v<empty_class>);
   EXPECT_TRUE(maglev::is_weighted_v<weighted_void>);
   EXPECT_FALSE(maglev::is_weighted_v<weighted_bool>);
