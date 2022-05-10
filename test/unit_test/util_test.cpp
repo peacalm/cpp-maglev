@@ -23,6 +23,10 @@ TEST(util, hash) {
 TEST(util, prime) {
   EXPECT_FALSE(maglev::is_prime(0));
   EXPECT_FALSE(maglev::is_prime(1));
+  EXPECT_FALSE(maglev::is_prime(4));
+  EXPECT_FALSE(maglev::is_prime(9));
+  EXPECT_FALSE(maglev::is_prime(10));
+  EXPECT_FALSE(maglev::is_prime(50));
 
   EXPECT_TRUE(maglev::is_prime(2));
   EXPECT_TRUE(maglev::is_prime(3));
