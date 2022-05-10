@@ -40,40 +40,30 @@ public:
     hash_all(hash64bit);
   }
 
-  permutation_generator& with_n(size_t n) {
+  void set_n(size_t n) {
     n_ = n;
     assert_n();
-    return *this;
   }
 
-  permutation_generator& with_offset(num_t offset = 0) {
+  void set_offset(num_t offset = 0) {
     assert(offset >= 0);
     assert(offset < n_);
     offset_ = offset;
-    return *this;
   }
 
-  permutation_generator& with_step(num_t step = 1) {
+  void set_step(num_t step = 1) {
     assert(step >= 1);
     assert(step < n_);
     step_ = step;
-    return *this;
   }
 
-  permutation_generator& hash_offset(hash64_t h4offset) {
-    offset_ = h4offset % n_;
-    return *this;
-  }
+  void hash_offset(hash64_t h4offset) { offset_ = h4offset % n_; }
 
-  permutation_generator& hash_step(hash64_t h4step) {
-    step_ = h4step % (n_ - 1) + 1;
-    return *this;
-  }
+  void hash_step(hash64_t h4step) { step_ = h4step % (n_ - 1) + 1; }
 
-  permutation_generator& hash_all(hash64_t hash64bit) {
-    offset_ = (hash64bit >> 32) % n_;
-    step_   = (hash64bit & 0xffffffff) % (n_ - 1) + 1;
-    return *this;
+  void hash_all(hash64_t hash64bit) {
+    offset_ = (hash64bit & 0X5555555555555555ULL) % n_;
+    step_   = (hash64bit & 0XaaaaaaaaaaaaaaaaULL) % (n_ - 1) + 1;
   }
 
   num_t gen_one_num() {
@@ -90,6 +80,10 @@ public:
     for (size_t i = 0; i < n_; ++i) p[i] = gen_one_num();
     return p;
   }
+
+  size_t n() const { return n_; }
+  num_t  offset() const { return offset_; }
+  num_t  step() const { return step_; }
 
 private:
   void assert_n() {
@@ -121,10 +115,7 @@ public:
   permutation_generator_with_rand(size_t n, hash64_t h, seed_t s)
       : base_t(n, h), seed_(s) {}
 
-  permutation_generator_with_rand& with_rand_seed(seed_t s) {
-    seed_ = s;
-    return *this;
-  }
+  void set_seed(seed_t s) { seed_ = s; }
 
   rand_num_t my_rand_max() const { return RAND_MAX; }
 
