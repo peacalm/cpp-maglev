@@ -50,7 +50,7 @@ public:
   }
 
 private:
-  int slot_cnt_ = 0;  // slot num obtained from maglev-hasher
+  int slot_cnt_ = 0;  // slot num obtained from maglev_hasher
 };
 
 template <typename Char, typename Traits, typename NodeBaseType>

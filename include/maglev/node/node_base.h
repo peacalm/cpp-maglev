@@ -24,7 +24,7 @@
 namespace maglev {
 
 // std::hash for integer got self, which may cause bad performance in maglev,
-// so use MaglevIntHash as default. Or you can specify your own hash method.
+// so use maglev_int_hash as default. Or you can specify your own hash method.
 template <typename IdType = std::string, typename HashType = def_hash_t<IdType>>
 class node_base {
 public:

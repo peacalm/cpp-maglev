@@ -30,7 +30,7 @@ public:
   using node_t = typename base_t::node_t;
 
   static_assert(is_weighted_t<node_t>::value,
-                "node should be wrapped by WeightedNodeWrapper");
+                "node should be wrapped by weighted_node_wrapper");
   using weighted_t = typename std::enable_if<is_weighted_t<node_t>::value,
                                              typename node_t::weighted_t>::type;
 
