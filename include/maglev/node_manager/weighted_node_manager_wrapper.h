@@ -55,28 +55,29 @@ public:
     weight_sum_ = 0;
     max_weight_ = 0;
     for (const auto& i : *this) {
-      int w = i->weight();
+      unsigned int w = i->weight();
       weight_sum_ += w;
       if (w > max_weight_) { max_weight_ = w; }
     }
     avg_weight_         = double(weight_sum_) / double(base_t::size());
     limited_max_weight_ = max_weight_;
     if (max_avg_rate_limit_ > 0) {
-      int limit = int(max_avg_rate_limit_ * double(weight_sum_) /
-                      double(base_t::size()));
+      unsigned int limit =
+          (unsigned int)(max_avg_rate_limit_ * double(weight_sum_) /
+                         double(base_t::size()));
       if (limited_max_weight_ > limit) { limited_max_weight_ = limit; }
     }
   }
 
-  int max_weight() const { return max_weight_; }
+  unsigned int max_weight() const { return max_weight_; }
 
-  int limited_max_weight() const { return limited_max_weight_; }
+  unsigned int limited_max_weight() const { return limited_max_weight_; }
 
-  int weight_sum() const { return weight_sum_; }
+  unsigned int weight_sum() const { return weight_sum_; }
 
   double avg_weight() const { return avg_weight_; }
 
-  bool max_weight_limited() const {
+  bool is_max_weight_limited() const {
     return limited_max_weight() < max_weight();
   }
 
@@ -84,10 +85,10 @@ private:
   // user defined
   double max_avg_rate_limit_ = 0;
   // internal params
-  int    weight_sum_         = 0;
-  int    max_weight_         = 0;
-  int    limited_max_weight_ = 0;
-  double avg_weight_         = 0;
+  unsigned int weight_sum_         = 0;
+  unsigned int max_weight_         = 0;
+  unsigned int limited_max_weight_ = 0;
+  double       avg_weight_         = 0;
 };
 
 template <typename Char, typename Traits, typename NodeGroupBaseType>
@@ -97,7 +98,7 @@ std::basic_ostream<Char, Traits>& operator<<(
   os << "{" << static_cast<const NodeGroupBaseType&>(wnm)
      << ",sz:" << wnm.size() << ",w_sum:" << wnm.weight_sum()
      << ",avg_w:" << wnm.avg_weight() << ",max_w:" << wnm.max_weight();
-  if (wnm.max_weight_limited()) {
+  if (wnm.is_max_weight_limited()) {
     os << ">" << wnm.limited_max_weight();
   } else {
     os << "=";

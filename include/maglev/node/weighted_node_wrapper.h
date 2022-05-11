@@ -33,9 +33,9 @@ public:
   weighted_node_wrapper(Args&&... args)
       : weight_(0), base_t(std::forward<Args>(args)...) {}
 
-  int weight() const { return weight_; }
+  unsigned int weight() const { return weight_; }
 
-  void set_weight(int w) { weight_ = w; }
+  void set_weight(unsigned int w) { weight_ = w; }
 
   virtual std::string to_str() const override {
     return (std::ostringstream{} << *this).str();
@@ -48,7 +48,7 @@ public:
   }
 
 private:
-  int weight_ = 0;
+  unsigned int weight_ = 0;
 };
 
 template <typename Char, typename Traits, typename NodeBaseType>

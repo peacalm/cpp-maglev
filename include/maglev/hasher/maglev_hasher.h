@@ -67,13 +67,13 @@ public:
       : node_manager_(std::forward<NodeManagerT>(nm)),
         slot_array_(std::forward<Args>(args)...) {}
 
-  slot_array_t& mutable_slot_array() { return slot_array_; }
+  slot_array_t& slot_array() { return slot_array_; }
 
   const slot_array_t& slot_array() const { return slot_array_; }
 
   size_t slot_size() const { return slot_array_.size(); }
 
-  node_manager_t& mutable_node_manager() { return node_manager_; }
+  node_manager_t& node_manager() { return node_manager_; }
 
   const node_manager_t& node_manager() const { return node_manager_; }
 

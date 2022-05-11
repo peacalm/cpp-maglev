@@ -59,7 +59,7 @@ public:
 
   node_map_t make_node_map() const {
     node_map_t ret;
-    for (auto& i : *this) { ret[i->id()] = i; }
+    for (auto& i : *this) { ret.emplace(i->id(), i); }
     return ret;
   }
 
@@ -84,7 +84,7 @@ std::basic_ostream<Char, Traits>& operator<<(
   os << "[";
   for (size_t i = 0; i < nm.size(); ++i) {
     if (i > 0) os << ",";
-    os << *nm[i];
+    os << *(nm[i]);
   }
   os << "]";
   return os;
