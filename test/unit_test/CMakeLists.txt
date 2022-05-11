@@ -10,6 +10,11 @@ if (NOT GTEST_FOUND)
     message(FATAL_ERROR "GTest not found! Please install GTest first.")
 endif()
 
+option(ENABLE_MYOSTREAM_WATCH "Use lib myostream to print variables to console." FALSE)
+if (ENABLE_MYOSTREAM_WATCH)
+    add_definitions(-DENABLE_MYOSTREAM_WATCH)
+endif()
+
 file(GLOB SOURCE_FILES "*.cpp")
 add_executable(unit_test ${SOURCE_FILES})
 

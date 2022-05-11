@@ -18,7 +18,7 @@ TEST(wrapper, extra_wrapper) {
   maglev::extra_wrapper<maglev::node_base<>> n("string-type-node-id");
   n.extra_set("ip", "1.1.1.1");
   n.extra_set("port", "22");
-  std::cout << "extra wrapped node base: " << n << std::endl;
+  maglev_watch(n);
 
   EXPECT_TRUE(n.extra_has("ip"));
   EXPECT_TRUE(n.extra_has("port"));
@@ -26,7 +26,7 @@ TEST(wrapper, extra_wrapper) {
   EXPECT_FALSE(n.extra_has("port", "33"));
 
   n.extra_set("port", "33");
-  std::cout << "extra wrapped node base: " << n << std::endl;
+  maglev_watch(n);
 
   EXPECT_TRUE(n.extra_has("port"));
   EXPECT_FALSE(n.extra_has("port", "22"));
@@ -35,7 +35,7 @@ TEST(wrapper, extra_wrapper) {
   EXPECT_EQ(n.extra_get("nx", "xx"), "xx");
 
   n.extra_del("port");
-  std::cout << "extra wrapped node base: " << n << std::endl;
+  maglev_watch(n);
 
   EXPECT_FALSE(n.extra_has("port"));
   EXPECT_FALSE(n.extra_has("port", "22"));

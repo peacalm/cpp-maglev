@@ -36,6 +36,7 @@ TEST(permutation, permutation_generator) {
     s2.insert(i);
   }
   EXPECT_EQ(s1, s2);
+  maglev_watch(p);
 }
 
 TEST(permutation, permutation_generator_with_rand) {

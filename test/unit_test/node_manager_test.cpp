@@ -27,7 +27,7 @@ TEST(node_manager, node_manager_base) {
   nm.sort();
   EXPECT_TRUE(nm.is_sorted());
 
-  std::cout << "node_manager_base: " << nm << std::endl;
+  maglev_watch_with_std_cout(nm);
 }
 
 TEST(node_manager, weighted_node_manager_wrapper) {
@@ -49,12 +49,12 @@ TEST(node_manager, weighted_node_manager_wrapper) {
   EXPECT_EQ(nm.max_weight(), 7000);
   EXPECT_EQ(nm.limited_max_weight(), 7000);
 
-  std::cout << "weighted_node_manager_wrapper: " << nm << std::endl;
+  maglev_watch_with_std_cout(nm);
 
   nm.set_max_avg_rate_limit(1.5);
   nm.init_weight();
   EXPECT_EQ(nm.max_weight(), 7000);
   EXPECT_LT(nm.limited_max_weight(), 7000);
 
-  std::cout << "weighted_node_manager_wrapper: " << nm << std::endl;
+  maglev_watch_with_std_cout(nm);
 }

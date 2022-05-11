@@ -27,7 +27,7 @@ TEST(node, node_base) {
   EXPECT_NE(maglev::node_base<int>(0).id_hash(), 0);
   EXPECT_NE(maglev::node_base<int>().id_hash(), 0);
 
-  std::cout << "node_base: " << sn << in << std::endl;
+  maglev_watch(sn, in);
 }
 
 TEST(node, server_node_base) {
@@ -40,7 +40,7 @@ TEST(node, server_node_base) {
   maglev::server_node_base<> n2("1.2.3.4", 88, "str-id");
   EXPECT_EQ(n2.id(), "str-id");
 
-  std::cout << "server_node_base: " << n << n2 << std::endl;
+  maglev_watch(n, n2);
 }
 
 TEST(node, slot_counted_node_wrapper) {
@@ -54,7 +54,7 @@ TEST(node, slot_counted_node_wrapper) {
   n.set_slot_cnt(13);
   EXPECT_EQ(n.slot_cnt(), 13);
 
-  std::cout << "slot_counted_node_wrapper: " << n << std::endl;
+  maglev_watch(n);
 }
 
 TEST(node, weighted_node_wrapper) {
@@ -64,7 +64,7 @@ TEST(node, weighted_node_wrapper) {
   n.set_weight(90);
   EXPECT_EQ(n.weight(), 90);
 
-  std::cout << "weighted_node_wrapper: " << n << std::endl;
+  maglev_watch(n);
 }
 
 TEST(node, complex) {
@@ -98,5 +98,5 @@ TEST(node, complex) {
   n4.extra_set("type", "special");
   n4.extra_set("feature", "666");
 
-  std::cout << "complex node: " << n1 << n2 << n3 << n4 << std::endl;
+  maglev_watch(n1, n2, n3, n4);
 }

@@ -15,6 +15,17 @@
 #pragma once
 
 #include <gtest/gtest.h>
+#if defined(ENABLE_MYOSTREAM_WATCH)
+#include <myostream.h>
+#define maglev_watch(...)                 \
+  std::cout << MYOSTREAM_WATCH_TO_STRING( \
+      std::string, " = ", "\n", "\n", __VA_ARGS__)
+#define maglev_watch_with_std_cout(...) \
+  MYOSTREAM_WATCH(std::cout, " = ", "\n", "\n", __VA_ARGS__)
+#else
+#define maglev_watch(...)
+#define maglev_watch_with_std_cout(...)
+#endif
 
 #include "maglev/hasher/maglev_hasher.h"
 #include "maglev/hasher/slot_array.h"
