@@ -68,7 +68,7 @@ std::basic_ostream<Char, Traits>& operator<<(
   return os;
 }
 
-template <typename NodeBaseType>
+template <typename NodeBaseType = node_base<std::string>>
 class virtual_server_node_base : public server_node_base<NodeBaseType> {
   using base_t = server_node_base<NodeBaseType>;
 

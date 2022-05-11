@@ -43,6 +43,20 @@ TEST(node, server_node_base) {
   maglev_watch(n, n2);
 }
 
+TEST(node, virtual_server_node_base) {
+  maglev::virtual_server_node_base<> n("1.2.3.4", 88, 5);
+  EXPECT_EQ(n.ip(), "1.2.3.4");
+  EXPECT_EQ(n.port(), 88);
+  EXPECT_EQ(n.vid(), 5);
+  EXPECT_EQ(n.id(), "1.2.3.4:88:5");
+  EXPECT_NE(n.id_hash(), 0);
+
+  maglev::virtual_server_node_base<> n2("1.2.3.4", 88, 5, "str-id");
+  EXPECT_EQ(n2.id(), "str-id");
+
+  maglev_watch(n, n2);
+}
+
 TEST(node, slot_counted_node_wrapper) {
   maglev::slot_counted_node_wrapper<maglev::node_base<int>> n(123);
   EXPECT_EQ(n.id(), 123);
