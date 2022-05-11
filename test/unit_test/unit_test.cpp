@@ -19,7 +19,7 @@
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
-  std::cout << "running maglev unit test." << std::endl;
+  std::cout << ">>> Running maglev unit test." << std::endl;
 
   int ret = RUN_ALL_TESTS();
 

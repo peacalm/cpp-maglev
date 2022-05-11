@@ -1,17 +1,43 @@
 #!/usr/bin/env bash
 
-cd test/unit_test
+RUN_UNIT_TEST=0
+RUN_PERFORMANCE_TEST=0
+MYOSTREAM=FALSE
+while [ "$#" -gt 0 ]; do
+  case $1 in
+    -ru)
+      RUN_UNIT_TEST=1
+      shift
+      ;;
+    -rp)
+      RUN_PERFORMANCE_TEST=1
+      shift
+      ;;
+    -o)
+      MYOSTREAM=TRUE
+      shift
+      ;;
+    -h)
+      echo "run_test.sh [-o] [-ru] [-rp]"
+      exit 0
+      ;;
+    *)
+      echo "Invalid option '$1'"
+      echo
+      exit 1
+      ;;
+  esac
+done
+
 mkdir -p build
 cd build
-cmake .. -DENABLE_MYOSTREAM_WATCH=TRUE
+cmake .. -DBUILD_TEST=TRUE -DENABLE_MYOSTREAM_WATCH=${MYOSTREAM}
 make
-./unit_test
+make test
 
-
-cd ../../performance_test
-mkdir -p build
-cd build
-cmake .. -DENABLE_MYOSTREAM_WATCH=TRUE
-make
-./performance_test
-
+if [ ${RUN_UNIT_TEST} -eq 1 ]; then
+  ./test/unit_test/unit_test
+fi
+if [ ${RUN_PERFORMANCE_TEST} -eq 1 ]; then
+  ./test/performance_test/performance_test
+fi
