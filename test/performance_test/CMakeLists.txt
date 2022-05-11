@@ -20,14 +20,14 @@ if (ENABLE_MYOSTREAM_WATCH)
 endif()
 
 file(GLOB SOURCE_FILES "*.cpp")
-add_executable(unit_test ${SOURCE_FILES})
+add_executable(performance_test ${SOURCE_FILES})
 
-target_include_directories(unit_test PUBLIC
+target_include_directories(performance_test PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/
         ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
-target_include_directories(unit_test PUBLIC
+target_include_directories(performance_test PUBLIC
         ${GTEST_INCLUDE_DIR}
         ${MyOStream_INCLUDE_DIR})
-target_link_libraries(unit_test PUBLIC ${GTEST_LIBRARIES})
+target_link_libraries(performance_test PUBLIC ${GTEST_LIBRARIES})
 
-add_test(NAME unit_test COMMAND unit_test)
+add_test(NAME performance_test COMMAND performance_test)

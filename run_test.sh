@@ -13,12 +13,17 @@ while [ "$#" -gt 0 ]; do
       RUN_PERFORMANCE_TEST=1
       shift
       ;;
+    -r)
+      RUN_UNIT_TEST=1
+      RUN_PERFORMANCE_TEST=1
+      shift
+      ;;
     -o)
       MYOSTREAM=TRUE
       shift
       ;;
     -h)
-      echo "run_test.sh [-o] [-ru] [-rp]"
+      echo "run_test.sh [-o] [-r | -ru | -rp]"
       exit 0
       ;;
     *)
