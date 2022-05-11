@@ -18,11 +18,11 @@ template <typename SlotArrayType   = slot_array<int>,
 class maglev_hasher;
 ```
 SlotArrayType: `maglev::slot_array` or `maglev::slot_vector`, 
-slot number must be a prime number, and suggest it should be at least 10 times 
+slot number must be a *prime* number, and suggest it should be at least 10 times 
 larger than number of candidate nodes.
 
 NodeType: A node is a candidate, which must a unique id, and the id must 
-hashable. If the node has a weight, then the weight must be a non-negative 
+hashable. If the node has a weight, then the weight must be a *non-negative* 
 number.
 Here is a `maglev::weighted_node_wrapper` which can support weight for a node.
 
