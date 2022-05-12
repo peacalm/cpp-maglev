@@ -16,6 +16,8 @@
 RUN_UNIT_TEST=0
 RUN_PERFORMANCE_TEST=0
 MYOSTREAM=FALSE
+REBUILD=0
+CLEAR=0
 while [ "$#" -gt 0 ]; do
   case $1 in
     -ru)
@@ -35,8 +37,16 @@ while [ "$#" -gt 0 ]; do
       MYOSTREAM=TRUE
       shift
       ;;
+    --rebuild)
+      REBUILD=1
+      shift
+      ;;
+    --clear)
+      CLEAR=1
+      shift
+      ;;
     -h)
-      echo "run_test.sh [-o] [-r | -ru | -rp]"
+      echo "run_test.sh [-o] [-r|-ru|-rp] [--rebuild] [--clear]"
       exit 0
       ;;
     *)
@@ -47,6 +57,9 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
+if [ ${REBUILD} -eq 1 ]; then
+  rm -rf build
+fi
 mkdir -p build
 cd build
 cmake .. -DBUILD_TEST=TRUE -DENABLE_MYOSTREAM_WATCH=${MYOSTREAM}
@@ -58,4 +71,9 @@ if [ ${RUN_UNIT_TEST} -eq 1 ]; then
 fi
 if [ ${RUN_PERFORMANCE_TEST} -eq 1 ]; then
   ./test/performance_test/performance_test
+fi
+
+if [ ${CLEAR} -eq 1 ]; then
+  cd ..
+  rm -rf build
 fi
