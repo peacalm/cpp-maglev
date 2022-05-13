@@ -102,7 +102,7 @@ TEST(stats, atomic_counter) {
 
     i = 0;
     // i++ ++; // invalid
-    ++++i;
+    ++ ++i;
     EXPECT_EQ(i, 2);
   }
   {
@@ -146,7 +146,7 @@ TEST(stats, atomic_counter) {
 
     i = 0;
     // i++ ++; // invalid
-    ++++i;
+    ++ ++i;
     EXPECT_EQ(i, 2);
   }
 }
@@ -217,3 +217,31 @@ TEST(stats, cycle_array) {
   EXPECT_EQ(a.next_item(), 11);
   EXPECT_EQ(a.prev_item(), 9);
 }
+
+TEST(stats, sliding_window) {
+  maglev::sliding_window<> w;
+  w.incr();
+  EXPECT_EQ(w.now(), 1);
+  EXPECT_EQ(w.last(), 0);
+  EXPECT_EQ(w.sum(), 0);
+  EXPECT_EQ(w.avg(), 0);
+  EXPECT_EQ(w.heartbeat_cnt(), 0);
+
+  w.heartbeat();
+  w.incr(2);
+  EXPECT_EQ(w.now(), 2);
+  EXPECT_EQ(w.last(), 1);
+  EXPECT_EQ(w.sum(), 1);
+  EXPECT_EQ(w.heartbeat_cnt(), 1);
+  EXPECT_EQ(w.avg(), 1);
+
+  w.heartbeat();
+  w.incr();
+  w.incr(2);
+  EXPECT_EQ(w.now(), 3);
+  EXPECT_EQ(w.last(), 2);
+  EXPECT_EQ(w.sum(), 3);
+  EXPECT_EQ(w.avg(), 3. / 2.);
+  EXPECT_EQ(w.heartbeat_cnt(), 2);
+}
+TEST(stats, load_stats) {}

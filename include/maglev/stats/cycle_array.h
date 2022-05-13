@@ -132,6 +132,8 @@ public:
   using index_value_t = typename index_t::index_value_t;
 
 public:
+  cycle_array() : i_(0) { a_.fill(T{}); }
+
   constexpr size_t size() const { return Size; }
 
   const index_t& index() const { return i_; }
