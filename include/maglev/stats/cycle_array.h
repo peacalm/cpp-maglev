@@ -124,6 +124,7 @@ std::basic_ostream<Char, Traits>& operator<<(
 template <typename T, size_t Size = 64>
 class cycle_array {
   static constexpr bool is_power_of_two = ((Size & (Size - 1)) == 0);
+  static_assert(Size > 0, "cycle_array Size must greater than 0.");
 
 public:
   using item_t        = T;
