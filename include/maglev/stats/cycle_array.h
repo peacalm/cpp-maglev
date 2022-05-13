@@ -147,7 +147,7 @@ public:
   item_t&       operator[](index_t i) { return a_[i.get()]; }
 
   void push(const item_t& i) { a_[i_++] = i; }
-  void push(item_t&& i) { a_[i_--] = std::move(i); }
+  void push(item_t&& i) { a_[i_++] = std::move(i); }
 
 private:
   std::array<item_t, Size> a_;
