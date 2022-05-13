@@ -30,34 +30,55 @@ public:
   using value_t   = IntType;
   using counter_t = typename std::atomic<value_t>;
 
-  value_t unit() const { return Unit; }
-
 public:
   atomic_counter(value_t v = 0) : cnt_(v) {}
-  atomic_counter(const atomic_counter& r) : cnt_(r) {}
+  atomic_counter(const atomic_counter& r) : cnt_(r.get()) {}
 
-  operator value_t() const noexcept { return get(); }
+  constexpr value_t unit() const { return Unit; }
 
-  value_t operator=(value_t v) noexcept {
-    set(v);
-    return v;
-  }
-
-  value_t operator+(value_t v) const noexcept { return get() + v; }
-  value_t operator-(value_t v) const noexcept { return get() - v; }
-  value_t operator+=(value_t v) noexcept { return incr(v); }
-  value_t operator-=(value_t v) noexcept { return decr(v); }
-
-  value_t operator++() noexcept { return incr(unit()); }
-  value_t operator--() noexcept { return decr(unit()); }
-  value_t operator++(int) noexcept { return fetch_add(unit()); }
-  value_t operator--(int) noexcept { return fetch_sub(unit()); }
-
-protected:
   value_t get() const noexcept { return cnt_.load(std::memory_order_relaxed); }
 
   void set(value_t v) noexcept { cnt_.store(v, std::memory_order_relaxed); }
 
+  void clear() noexcept { set(value_t{0}); }
+
+  operator value_t() const noexcept { return get(); }
+
+  atomic_counter& operator=(value_t v) noexcept {
+    set(v);
+    return *this;
+  }
+  atomic_counter& operator=(const atomic_counter& r) noexcept {
+    set(r.get());
+    return *this;
+  }
+  atomic_counter& operator+=(value_t v) noexcept {
+    fetch_add(v);
+    return *this;
+  }
+  atomic_counter& operator-=(value_t v) noexcept {
+    fetch_sub(v);
+    return *this;
+  }
+
+  // Delete suffix increment and decrement
+  value_t operator++(int) noexcept = delete;  // { return fetch_add(unit()); }
+  value_t operator--(int) noexcept = delete;  // { return fetch_sub(unit()); }
+
+  // Prefix increment and decrement
+  atomic_counter& operator++() noexcept {
+    fetch_add(unit());
+    return *this;
+  }
+  atomic_counter& operator--() noexcept {
+    fetch_sub(unit());
+    return *this;
+  }
+
+  value_t operator+(value_t v) const noexcept { return get() + v; }
+  value_t operator-(value_t v) const noexcept { return get() - v; }
+
+protected:
   value_t fetch_add(value_t delta) noexcept {
     return cnt_.fetch_add(delta, std::memory_order_relaxed);
   }
@@ -66,11 +87,13 @@ protected:
     return cnt_.fetch_sub(delta, std::memory_order_relaxed);
   }
 
-  void clear() noexcept { set(value_t{0}); }
+  value_t after_fetch_add(value_t delta) noexcept {
+    return fetch_add(delta) + delta;
+  }
 
-  value_t incr(value_t delta) noexcept { return fetch_add(delta) + delta; }
-
-  value_t decr(value_t delta) noexcept { return fetch_sub(delta) - delta; }
+  value_t after_fetch_sub(value_t delta) noexcept {
+    return fetch_sub(delta) - delta;
+  }
 
 private:
   counter_t cnt_{0};
