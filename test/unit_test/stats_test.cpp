@@ -150,3 +150,70 @@ TEST(stats, atomic_counter) {
     EXPECT_EQ(i, 2);
   }
 }
+
+TEST(stats, cycle_index) {
+  EXPECT_EQ(maglev::cycle_index<64>{}, 0);
+  EXPECT_EQ(maglev::cycle_index<64>(64), 0);
+  EXPECT_EQ(maglev::cycle_index<64>(65), 1);
+  maglev::cycle_index<32> ci;
+  for (int i = 0; i < 100; ++i) {
+    EXPECT_EQ(ci, i % ci.size());
+    ++ci;
+  }
+  ci = 0;
+  for (int i = 0; i < 100; ++i) {
+    EXPECT_EQ(ci, ci.mod(i));
+    ++ci;
+  }
+
+  ci = 0;
+  EXPECT_EQ(ci++, 0);
+  EXPECT_EQ(++ci, 2);
+  ci = 0;
+  EXPECT_EQ(--ci, 31);
+  EXPECT_EQ(ci--, 31);
+  EXPECT_EQ(ci, 30);
+
+  ci = 0;
+  ci += 34;
+  EXPECT_EQ(ci, 2);
+  ci -= 3;
+  EXPECT_EQ(ci, 31);
+
+  maglev::cycle_index<29> j;
+  for (int i = 0; i < 100; ++i) {
+    EXPECT_EQ(j, j.mod(i));
+    ++j;
+  }
+}
+
+TEST(stats, cycle_array) {
+  maglev::cycle_array<int, 16> a;
+  for (int i = 0; i < 16; ++i) a.push(i);
+  EXPECT_EQ(a[2], 2);
+  EXPECT_EQ(a[12], 12);
+  EXPECT_EQ(a[17], 1);
+
+  EXPECT_EQ(a.index(), 0);
+  EXPECT_EQ(a.curr_item(), 0);
+  EXPECT_EQ(a.next_item(), 1);
+  EXPECT_EQ(a.prev_item(), 15);
+
+  a.index()++;
+  EXPECT_EQ(a.index(), 1);
+  EXPECT_EQ(a.curr_item(), 1);
+  EXPECT_EQ(a.next_item(), 2);
+  EXPECT_EQ(a.prev_item(), 0);
+
+  a.index() += 10;
+  EXPECT_EQ(a.index(), 11);
+  EXPECT_EQ(a.curr_item(), 11);
+  EXPECT_EQ(a.next_item(), 12);
+  EXPECT_EQ(a.prev_item(), 10);
+
+  --a.index();
+  EXPECT_EQ(a.index(), 10);
+  EXPECT_EQ(a.curr_item(), 10);
+  EXPECT_EQ(a.next_item(), 11);
+  EXPECT_EQ(a.prev_item(), 9);
+}

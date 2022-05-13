@@ -37,6 +37,7 @@
 #include "maglev/node_manager/weighted_node_manager_wrapper.h"
 #include "maglev/permutation/permutation_generator.h"
 #include "maglev/stats/atomic_counter.h"
+#include "maglev/stats/cycle_array.h"
 #include "maglev/util/hash.h"
 #include "maglev/util/prime.h"
 #include "maglev/util/type_traits.h"
