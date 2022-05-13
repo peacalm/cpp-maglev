@@ -21,11 +21,32 @@ TEST(node_manager, node_manager_base) {
   nm.new_back(9);
   nm.push_back(nm.new_node(2));
   nm.new_back(7);
-  EXPECT_EQ(nm.size(), 4);
+  nm.new_back(10);
+  nm.new_back(18);
+  EXPECT_EQ(nm.size(), 6);
 
   EXPECT_FALSE(nm.is_sorted());
   nm.sort();
   EXPECT_TRUE(nm.is_sorted());
+
+  auto i2 = nm.find_by_node_id(2);
+  EXPECT_TRUE(i2 != nullptr);
+  EXPECT_EQ(i2->id(), 2);
+
+  auto i3 = nm.find_by_node_id(3);
+  EXPECT_TRUE(i3 != nullptr);
+  EXPECT_EQ(i3->id(), 3);
+
+  auto i9 = nm.find_by_node_id(9);
+  EXPECT_TRUE(i9 != nullptr);
+  EXPECT_EQ(i9->id(), 9);
+
+  auto i1 = nm.find_by_node_id(1);
+  EXPECT_TRUE(i1 == nullptr);
+  auto i8 = nm.find_by_node_id(8);
+  EXPECT_TRUE(i8 == nullptr);
+  auto i100 = nm.find_by_node_id(100);
+  EXPECT_TRUE(i100 == nullptr);
 
   maglev_watch_with_std_cout(nm);
 }

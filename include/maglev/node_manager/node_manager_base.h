@@ -39,6 +39,7 @@ public:
                 "value in ContainerType must be same type as node_ptr_t");
 
 public:
+  // Call this after all nodes have pushed into node_manager.
   virtual void ready_go() {
     if (!is_sorted()) sort();
   }
@@ -64,6 +65,17 @@ public:
   void push_back(const item_t& i) {
     assert(i);
     base_t::push_back(i);
+  }
+
+  // Returns node pointer if found, or nullptr if not.
+  node_ptr_t find_by_node_id(const node_id_t& id) const {
+    auto it = std::lower_bound(base_t::begin(),
+                               base_t::end(),
+                               id,
+                               [](const item_t& item, const node_id_t& id) {
+                                 return item->id() < id;
+                               });
+    return it != base_t::end() && (*it)->id() == id ? *it : nullptr;
   }
 
   node_map_t make_node_map() const {
