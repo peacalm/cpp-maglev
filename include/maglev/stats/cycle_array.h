@@ -36,7 +36,10 @@ public:
 
   operator index_value_t() { return i_; }
 
-  cycle_index &operator=(cycle_index r) { i_ = r.i_; return *this; }
+  cycle_index &operator=(cycle_index r) {
+    i_ = r.i_;
+    return *this;
+  }
 
   cycle_index &operator+=(cycle_index r) {
     i_ = next(r.i_);
@@ -71,7 +74,9 @@ public:
   }
 
   cycle_index operator+(cycle_index r) const { return cycle_index(next(r.i_)); }
-  cycle_index operator-(cycle_index r) const { return cycle_index(next(size() - r.i_)); }
+  cycle_index operator-(cycle_index r) const {
+    return cycle_index(next(size() - r.i_));
+  }
 
   index_value_t next(index_value_t delta) const { return mod(i_ + delta); }
 
