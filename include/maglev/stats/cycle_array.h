@@ -27,8 +27,8 @@ public:
   using index_value_t = size_t;
 
   cycle_index(index_value_t v = 0) : i_(mod(v)) {}
-  cycle_index(const cycle_index &r) : i_(r.i_) {}
-  cycle_index(cycle_index &&r) : i_(r.i_) {}
+  cycle_index(const cycle_index& r) : i_(r.i_) {}
+  cycle_index(cycle_index&& r) : i_(r.i_) {}
 
   constexpr size_t size() const { return Size; }
 
@@ -36,27 +36,27 @@ public:
 
   operator index_value_t() { return i_; }
 
-  cycle_index &operator=(cycle_index r) {
+  cycle_index& operator=(cycle_index r) {
     i_ = r.i_;
     return *this;
   }
 
-  cycle_index &operator+=(cycle_index r) {
+  cycle_index& operator+=(cycle_index r) {
     i_ = next(r.i_);
     return *this;
   }
 
-  cycle_index &operator-=(cycle_index r) {
+  cycle_index& operator-=(cycle_index r) {
     i_ = next(size() - r.i_);
     return *this;
   }
 
   // Suffix increment and decrement
-  cycle_index &operator++() {
+  cycle_index& operator++() {
     i_ = next(1);
     return *this;
   }
-  cycle_index &operator--() {
+  cycle_index& operator--() {
     i_ = next(size() - 1);
     return *this;
   }
@@ -82,12 +82,12 @@ public:
 
   index_value_t mod(index_value_t v) const { return __mod<is_power_of_two>(v); }
 
-  bool operator==(const cycle_index &r) const { return i_ == r.i_; }
-  bool operator!=(const cycle_index &r) const { return i_ != r.i_; }
-  bool operator<(const cycle_index &r) const { return i_ < r.i_; }
-  bool operator<=(const cycle_index &r) const { return i_ <= r.i_; }
-  bool operator>(const cycle_index &r) const { return i_ > r.i_; }
-  bool operator>=(const cycle_index &r) const { return i_ >= r.i_; }
+  bool operator==(const cycle_index& r) const { return i_ == r.i_; }
+  bool operator!=(const cycle_index& r) const { return i_ != r.i_; }
+  bool operator<(const cycle_index& r) const { return i_ < r.i_; }
+  bool operator<=(const cycle_index& r) const { return i_ <= r.i_; }
+  bool operator>(const cycle_index& r) const { return i_ > r.i_; }
+  bool operator>=(const cycle_index& r) const { return i_ >= r.i_; }
 
   bool operator==(index_value_t r) const { return i_ == r; }
   bool operator!=(index_value_t r) const { return i_ != r; }
@@ -114,8 +114,8 @@ private:
 };
 
 template <typename Char, typename Traits, size_t Size>
-std::basic_ostream<Char, Traits> &operator<<(
-    std::basic_ostream<Char, Traits> &os, const cycle_index<Size> i) {
+std::basic_ostream<Char, Traits>& operator<<(
+    std::basic_ostream<Char, Traits>& os, const cycle_index<Size> i) {
   os << i.get();
   return os;
 }
@@ -133,21 +133,21 @@ public:
 public:
   constexpr size_t size() const { return Size; }
 
-  const index_t &index() const { return i_; }
-  index_t &      index() { return i_; }
+  const index_t& index() const { return i_; }
+  index_t&       index() { return i_; }
 
-  const item_t &curr_item() const { return a_[i_.get()]; }
-  item_t &      curr_item() { return a_[i_.get()]; }
-  const item_t &next_item() const { return a_[i_.next(1)]; }
-  item_t &      next_item() { return a_[i_.next(1)]; }
-  const item_t &prev_item() const { return a_[i_.next(size() - 1)]; }
-  item_t &      prev_item() { return a_[i_.next(size() - 1)]; }
+  const item_t& curr_item() const { return a_[i_.get()]; }
+  item_t&       curr_item() { return a_[i_.get()]; }
+  const item_t& next_item() const { return a_[i_.next(1)]; }
+  item_t&       next_item() { return a_[i_.next(1)]; }
+  const item_t& prev_item() const { return a_[i_.next(size() - 1)]; }
+  item_t&       prev_item() { return a_[i_.next(size() - 1)]; }
 
-  const item_t &operator[](index_t i) const { return a_[i.get()]; }
-  item_t &      operator[](index_t i) { return a_[i.get()]; }
+  const item_t& operator[](index_t i) const { return a_[i.get()]; }
+  item_t&       operator[](index_t i) { return a_[i.get()]; }
 
-  void push(const item_t &i) { a_[i_++] = i; }
-  void push(item_t &&i) { a_[i_--] = std::move(i); }
+  void push(const item_t& i) { a_[i_++] = i; }
+  void push(item_t&& i) { a_[i_--] = std::move(i); }
 
 private:
   std::array<item_t, Size> a_;
