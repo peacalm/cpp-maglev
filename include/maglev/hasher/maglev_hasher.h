@@ -51,8 +51,8 @@ public:
   using node_manager_item_t = typename node_manager_t::item_t;
 
   struct pick_ret_t {
-    node_manager_item_t node;
-    size_t              node_idx = 0;
+    node_manager_item_t node;          // node pointer
+    size_t              node_idx = 0;  // index in node_manager
   };
 
 protected:
