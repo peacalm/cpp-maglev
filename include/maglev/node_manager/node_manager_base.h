@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cassert>
 #include <map>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -32,7 +33,10 @@ public:
   using node_ptr_t = std::shared_ptr<node_t>;
   using node_id_t  = typename node_t::node_id_t;
   using node_map_t = std::unordered_map<node_id_t, node_ptr_t>;
-  using item_t     = node_ptr_t;
+  using item_t     = typename base_t::value_type;
+
+  static_assert((std::is_same<item_t, node_ptr_t>::value),
+                "value in ContainerType must be same type as node_ptr_t");
 
 public:
   virtual void ready_go() {
@@ -55,6 +59,11 @@ public:
     auto new_node_ptr = this->new_node(std::forward<Args>(args)...);
     base_t::push_back(new_node_ptr);
     return new_node_ptr;
+  }
+
+  void push_back(const item_t& i) {
+    assert(i);
+    base_t::push_back(i);
   }
 
   node_map_t make_node_map() const {
