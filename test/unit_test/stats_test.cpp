@@ -244,4 +244,5 @@ TEST(stats, sliding_window) {
   EXPECT_EQ(w.avg(), 3. / 2.);
   EXPECT_EQ(w.heartbeat_cnt(), 2);
 }
+
 TEST(stats, load_stats) {}

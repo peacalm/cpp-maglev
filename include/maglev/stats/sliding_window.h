@@ -19,7 +19,7 @@
 
 namespace maglev {
 
-/// `sliding_window` records a constant length sequence of integral points.
+/// Records a constant length timing sequence of integer points.
 template <typename PointValueType    = unsigned long long,
           PointValueType LoadUnit    = 1,
           size_t         LoadSeqSize = 64,
@@ -69,9 +69,9 @@ public:
   heartbeat_cnt_t heartbeat_cnt() const { return heartbeat_cnt_; }
 
 private:
-  counter_t       now_;  // realtime, load point of now, incomplete point
-  point_value_t   sum_;  // sum of load_seq
-  point_seq_t     seq_;  // sequence of load points, load history
+  counter_t       now_;  // realtime, point of now, incomplete point
+  point_value_t   sum_;  // sum of points in seq_
+  point_seq_t     seq_;  // sequence of history points, all complete points
   heartbeat_cnt_t heartbeat_cnt_;
 };
 
