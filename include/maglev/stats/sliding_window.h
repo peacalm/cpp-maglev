@@ -20,12 +20,12 @@
 namespace maglev {
 
 /// Records a constant length timing sequence of integer points.
-template <typename PointValueType    = unsigned long long,
-          PointValueType LoadUnit    = 1,
-          size_t         LoadSeqSize = 64,
-          typename CounterType       = atomic_counter<PointValueType, LoadUnit>,
-          typename PointSeqType      = cycle_array<PointValueType, LoadSeqSize>,
-          typename HeartbeatCntType  = size_t>
+template <typename PointValueType   = unsigned long long,
+          PointValueType Unit       = 1,
+          size_t         SeqSize    = 64,
+          typename CounterType      = atomic_counter<PointValueType, Unit>,
+          typename PointSeqType     = cycle_array<PointValueType, SeqSize>,
+          typename HeartbeatCntType = size_t>
 class sliding_window {
 public:
   using point_value_t   = PointValueType;
@@ -36,8 +36,8 @@ public:
 public:
   sliding_window() : now_(0), sum_(0), heartbeat_cnt_(0) {}
 
-  constexpr point_value_t load_unit() const { return LoadUnit; }
-  constexpr size_t        seq_size() const { return LoadSeqSize; }
+  constexpr point_value_t unit() const { return Unit; }
+  constexpr size_t        seq_size() const { return SeqSize; }
 
   // incr point of now by one unit.
   void incr() { ++now_; }
