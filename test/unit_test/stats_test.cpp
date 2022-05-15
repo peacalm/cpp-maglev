@@ -180,7 +180,12 @@ TEST(stats, cycle_index) {
   ci -= 3;
   EXPECT_EQ(ci, 31);
 
+  EXPECT_EQ(ci.is_size_power_of_two(), true);
+
   maglev::cycle_index<29> j;
+
+  EXPECT_EQ(j.is_size_power_of_two(), false);
+
   for (int i = 0; i < 100; ++i) {
     EXPECT_EQ(j, j.mod(i));
     ++j;
@@ -189,6 +194,10 @@ TEST(stats, cycle_index) {
 
 TEST(stats, cycle_array) {
   maglev::cycle_array<int, 16> a;
+
+  EXPECT_EQ(a.size(), 16);
+  EXPECT_EQ(a.is_size_power_of_two(), true);
+
   for (int i = 0; i < 16; ++i) a.push(i);
   EXPECT_EQ(a[2], 2);
   EXPECT_EQ(a[12], 12);
@@ -244,5 +253,3 @@ TEST(stats, sliding_window) {
   EXPECT_EQ(w.avg(), 3. / 2.);
   EXPECT_EQ(w.heartbeat_cnt(), 2);
 }
-
-TEST(stats, load_stats) {}
