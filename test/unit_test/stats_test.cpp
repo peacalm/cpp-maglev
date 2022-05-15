@@ -302,7 +302,7 @@ TEST(stats, load_stats) {
   EXPECT_EQ(decltype(b)::load_data_t ::point_seq_t ::is_size_power_of_two(),
             false);
 
-  //
+  // ban_wrapper
   maglev::ban_wrapper<maglev::load_stats<long>> c;
   EXPECT_EQ(c.consecutive_ban_cnt(), 0);
   EXPECT_EQ(c.last_ban_time(), 0);
@@ -317,7 +317,7 @@ TEST(stats, load_stats) {
   EXPECT_EQ(c.consecutive_ban_cnt(), 0);
   EXPECT_EQ(c.last_ban_time(), 0);
 
-  //
+  // server_load_stats_wrapper
   maglev::server_load_stats_wrapper<maglev::load_stats<>> s;
   EXPECT_EQ(s.query_rank(), 0);
   EXPECT_EQ(s.error_rank(), 0);
@@ -334,10 +334,14 @@ TEST(stats, load_stats) {
   EXPECT_EQ(s.fatal_rank(), 3);
   EXPECT_EQ(s.latency_rank(), 4);
 
+  s.incr_load(100);
   s.incr_server_load(100, 5, 1, 100 * 1000);
+  EXPECT_EQ(s.load().now(), 100);
   EXPECT_EQ(s.error_rate_of_now(), 0.05);
   EXPECT_EQ(s.fatal_rate_of_now(), 0.01);
   s.heartbeat();
+  EXPECT_EQ(s.load().now(), 0);
+  EXPECT_EQ(s.load().last(), 100);
   EXPECT_EQ(s.error_rate_of_now(), 0.0);
   EXPECT_EQ(s.fatal_rate_of_now(), 0.0);
   EXPECT_EQ(s.error_rate_of_last(), 0.05);
