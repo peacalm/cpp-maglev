@@ -12,10 +12,10 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "unit_test.h"
-
 #include <atomic>
 #include <ctime>
+
+#include "unit_test.h"
 
 TEST(stats, atomic_counter) {
   // default unit, 1
