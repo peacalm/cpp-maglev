@@ -12,9 +12,9 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include <numeric>
-
 #include "unit_test.h"
+
+#include <numeric>
 
 TEST(hasher, slot_array) {
   maglev::slot_array<int, 7> slot_array;
