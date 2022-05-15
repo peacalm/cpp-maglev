@@ -19,7 +19,10 @@
 
 namespace maglev {
 
-/// Records a constant length timing sequence of integer points.
+/// A constant length sliding window on a timing sequence of integer points
+/// and a sequence generator. Contains a integer point counter, called "now".
+/// Each time a `heartbeat()` it will generate a integer, make a copy of "now"
+/// and push it into window, then clear "now".
 template <typename PointValueType   = unsigned long long,
           PointValueType Unit       = 1,
           size_t         SeqSize    = 64,
@@ -52,11 +55,11 @@ public:
     ++heartbeat_cnt_;
   }
 
-  // Now is an incomplete load point
+  // Now is an incomplete point
   point_value_t now() const { return now_; }
-  // Last is a complete load point
+  // Last is a complete point
   point_value_t last() const { return seq_.prev_item(); }
-  // Sum of all complete load points
+  // Sum of all complete points in this window, NOT include now!
   point_value_t sum() const { return sum_; }
 
   // Average of data in seq_, not include data of now.

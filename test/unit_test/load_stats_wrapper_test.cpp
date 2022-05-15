@@ -12,17 +12,18 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#pragma once
+#include "unit_test.h"
 
-#include "maglev/node/node_base.h"
-#include "maglev/node/server_node_base.h"
-#include "maglev/node/slot_counted_node_wrapper.h"
-#include "maglev/node/weighted_node_wrapper.h"
-#include "maglev/stats/load_stats.h"
-
-namespace maglev {
-
-template <typename NodeType, typename LoadStatsType>
-class node_stats_wrapper : public NodeType, public LoadStatsType {};
-
-}  // namespace maglev
+TEST(stats, node_stats_wrapper) {
+  using node_t = maglev::load_stats_wrapper<maglev::node_base<int>,
+                                            maglev::load_stats<int, 1, 64>>;
+  node_t a(1);
+  EXPECT_EQ(a.id(), 1);
+  EXPECT_EQ(a.load().now(), 0);
+  a.load().incr(1);
+  EXPECT_EQ(a.load().now(), 1);
+  a.heartbeat();
+  EXPECT_EQ(a.load().now(), 0);
+  EXPECT_EQ(a.load().last(), 1);
+  EXPECT_EQ(a.load().sum(), 1);
+}

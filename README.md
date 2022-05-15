@@ -5,8 +5,8 @@ C++ standard requirement: >= C++14
 ## Intruduction
 The class to do consistent hash:
 ```C++
-template <typename SlotArrayType   = slot_array<int>,
-          typename NodeType        = node_base<std::string>,
+template <typename NodeType        = node_base<std::string>,
+          typename SlotArrayType   = slot_array<int>,
           typename NodeManagerType = typename std::conditional<
               is_weighted_t<NodeType>::value,
               weighted_node_manager_wrapper<node_manager_base<NodeType>>,
@@ -17,14 +17,14 @@ template <typename SlotArrayType   = slot_array<int>,
                                         permutation_generator>::type>
 class maglev_hasher;
 ```
-SlotArrayType: `maglev::slot_array` or `maglev::slot_vector`, 
-slot number must be a **prime** number, and suggest it should be at least 10 times 
-larger than number of candidate nodes.
-
 NodeType: A node is a candidate, which must a unique id, and the id must 
 hashable. If the node has a weight, then the weight must be a **non-negative** 
 number.
 Here is a `maglev::weighted_node_wrapper` which can support weight for a node.
+
+SlotArrayType: `maglev::slot_array` or `maglev::slot_vector`, 
+slot number must be a **prime** number, and suggest it should be at least 10 times 
+larger than number of candidate nodes.
 
 NodeManagerType and NodeManagerType will be auto deduced.
 
@@ -60,8 +60,7 @@ for (int i = 0; i < 100; ++i) {
 Candidates with weights, Weighted Maglev Hasher:
 ```C++
 // nodes with int type id
-maglev::maglev_hasher<maglev::slot_array<int, 65537>,
-                      maglev::weighted_node_wrapper<maglev::node_base<int>>> h;
+maglev::maglev_hasher<maglev::weighted_node_wrapper<maglev::node_base<int>>> h;
 for (int i = 0; i < 10; ++i) {
   h.node_manager().new_back(i)->set_weight(20 + rand() % 100);
 }

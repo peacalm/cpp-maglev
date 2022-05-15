@@ -35,8 +35,8 @@ TEST(hasher, slot_array) {
 
 TEST(hasher, maglev_hasher_consistent) {
   maglev::maglev_hasher<
-      maglev::slot_array<int, 65537>,
-      maglev::slot_counted_node_wrapper<maglev::node_base<int>>>
+      maglev::slot_counted_node_wrapper<maglev::node_base<int>>,
+      maglev::slot_array<int, 65537>>
       h;
   for (int i = 0; i < 10; ++i) { h.node_manager().new_back(i); }
   h.build();
@@ -56,8 +56,8 @@ TEST(hasher, maglev_hasher_consistent) {
 
 TEST(hasher, maglev_hasher_consistent2) {
   maglev::maglev_hasher<
-      maglev::slot_array<int, 5003>,
-      maglev::slot_counted_node_wrapper<maglev::node_base<std::string>>>
+      maglev::slot_counted_node_wrapper<maglev::node_base<std::string>>,
+      maglev::slot_array<int, 5003>>
       h;
   for (int i = 0; i < 10; ++i) { h.node_manager().new_back(std::to_string(i)); }
   h.build();
@@ -77,8 +77,8 @@ TEST(hasher, maglev_hasher_consistent2) {
 
 TEST(hasher, maglev_hasher_slot_vector) {
   maglev::maglev_hasher<
-      maglev::slot_vector<>,
-      maglev::slot_counted_node_wrapper<maglev::node_base<std::string>>>
+      maglev::slot_counted_node_wrapper<maglev::node_base<std::string>>,
+      maglev::slot_vector<>>
       h;
   h.slot_array().resize(65537);
   for (int i = 0; i < 10; ++i) { h.node_manager().new_back(std::to_string(i)); }
@@ -98,10 +98,8 @@ TEST(hasher, maglev_hasher_slot_vector) {
 }
 
 TEST(hasher, maglev_hasher_all_zero_weight) {
-  maglev::maglev_hasher<
-      maglev::slot_array<int, 65537>,
-      maglev::weighted_node_wrapper<
-          maglev::slot_counted_node_wrapper<maglev::node_base<int>>>>
+  maglev::maglev_hasher<maglev::weighted_node_wrapper<
+      maglev::slot_counted_node_wrapper<maglev::node_base<int>>>>
       h;
   for (int i = 0; i < 10; ++i) { h.node_manager().new_back(i); }
 
@@ -117,10 +115,8 @@ TEST(hasher, maglev_hasher_all_zero_weight) {
 }
 
 TEST(hasher, maglev_hasher_some_zero_weight) {
-  maglev::maglev_hasher<
-      maglev::slot_array<int, 65537>,
-      maglev::weighted_node_wrapper<
-          maglev::slot_counted_node_wrapper<maglev::node_base<int>>>>
+  maglev::maglev_hasher<maglev::weighted_node_wrapper<
+      maglev::slot_counted_node_wrapper<maglev::node_base<int>>>>
       h;
   for (int i = 0; i < 10; ++i) {
     h.node_manager().new_back(i)->set_weight(100 + rand() % 100);

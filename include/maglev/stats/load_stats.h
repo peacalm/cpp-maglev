@@ -34,7 +34,24 @@ public:
 
   // A load_stats must have a heartbeat() method.
   void heartbeat() {}
+
+  template <typename Char, typename Traits>
+  std::basic_ostream<Char, Traits>& output_stats(
+      std::basic_ostream<Char, Traits>& os) const {
+    return os;
+  }
 };
+
+template <typename Char,
+          typename Traits,
+          typename PointValueType,
+          PointValueType LoadUnit,
+          size_t         LoadSeqSize>
+std::basic_ostream<Char, Traits>& operator<<(
+    std::basic_ostream<Char, Traits>&                             os,
+    const fake_load_stats<PointValueType, LoadUnit, LoadSeqSize>& s) {
+  return os;
+}
 
 /// To record a node's load.
 template <typename PointValueType    = unsigned long long,
@@ -51,7 +68,8 @@ public:
   // A load_stats must have a heartbeat() method.
   void heartbeat() { load_.heartbeat(); }
 
-  load_data_t& load() { return load_; }
+  load_data_t&       load() { return load_; }
+  const load_data_t& load() const { return load_; }
 
   int load_rank() const { return load_rank_; }
 
@@ -59,10 +77,33 @@ public:
 
   void incr_load(load_value_t d = load_unit()) { load_.incr(d); }
 
+  template <typename Char, typename Traits>
+  std::basic_ostream<Char, Traits>& output_stats(
+      std::basic_ostream<Char, Traits>& os) const {
+    os << "n:" << load().now() << ",l:" << load().last()
+       << ",s:" << load().sum();
+    if (load_rank()) os << ",r:" << load_rank();
+    return os;
+  }
+
 private:
   load_data_t load_;
   int         load_rank_ = 0;
 };
+
+template <typename Char,
+          typename Traits,
+          typename PointValueType,
+          PointValueType LoadUnit,
+          size_t         LoadSeqSize>
+std::basic_ostream<Char, Traits>& operator<<(
+    std::basic_ostream<Char, Traits>&                        os,
+    const load_stats<PointValueType, LoadUnit, LoadSeqSize>& s) {
+  os << "[";
+  s.output_stats(os);
+  os << "]";
+  return os;
+}
 
 /// To record info about whether a node is banned.
 template <typename LoadStatsBase>
@@ -79,10 +120,29 @@ public:
   ban_time_t last_ban_time() const { return last_ban_time_; }
   void       set_last_ban_time(ban_time_t t) { last_ban_time_ = t; }
 
+  template <typename Char, typename Traits>
+  std::basic_ostream<Char, Traits>& output_stats(
+      std::basic_ostream<Char, Traits>& os) const {
+    base_t::output_stats(os);
+    if (last_ban_time() != 0 || consecutive_ban_cnt() != 0) {
+      os << "ban:(" << last_ban_time() << "," << consecutive_ban_cnt() << ")";
+    }
+    return os;
+  }
+
 private:
   ban_cnt_t  consecutive_ban_cnt_ = 0;
   ban_time_t last_ban_time_       = 0;
 };
+
+template <typename Char, typename Traits, typename LoadStatsBase>
+std::basic_ostream<Char, Traits>& operator<<(
+    std::basic_ostream<Char, Traits>& os, const ban_wrapper<LoadStatsBase>& s) {
+  os << "[";
+  s.output_stats(os);
+  os << "]";
+  return os;
+}
 
 /// To describe a server's load in RPC scene.
 template <typename LoadStatsBase,
@@ -118,6 +178,11 @@ public:
   error_data_t&   error() { return error_; }
   fatal_data_t&   fatal() { return fatal_; }
   latency_data_t& latency() { return latency_; }
+
+  const query_data_t&   query() const { return query_; }
+  const error_data_t&   error() const { return error_; }
+  const fatal_data_t&   fatal() const { return fatal_; }
+  const latency_data_t& latency() const { return latency_; }
 
   int query_rank() { return query_rank_; }
   int error_rank() { return error_rank_; }
@@ -175,6 +240,23 @@ public:
     latency_.incr(l);
   }
 
+  template <typename Char, typename Traits>
+  std::basic_ostream<Char, Traits>& output_stats(
+      std::basic_ostream<Char, Traits>& os) const {
+    base_t::output_stats(os);
+    os << "n:(" << query().now() << "," << error().now() << "," << fatal().now()
+       << "," << avg_latency_of_now() << ")";
+    os << ",l:(" << query().last() << "," << error().last() << ","
+       << fatal().last() << "," << avg_latency_of_last() << ")";
+    os << ",s:(" << query().sum() << "," << error().sum() << ","
+       << fatal().sum() << "," << avg_latency_of_window() << ")";
+    if (query_rank() || error_rank() || fatal_rank() || latency_rank()) {
+      os << ",r:(" << query_rank() << "," << error_rank() << "," << fatal_rank()
+         << "," << latency_rank() << ")";
+    }
+    return os;
+  }
+
 private:
   query_data_t   query_;
   error_data_t   error_;
@@ -186,5 +268,27 @@ private:
   int fatal_rank_   = 0;
   int latency_rank_ = 0;
 };
+
+template <typename Char,
+          typename Traits,
+          typename LoadStatsBase,
+          typename QueryCntType,
+          typename ErrorCntType,
+          typename FatalCntType,
+          typename LatencyCntType,
+          size_t SeqSize>
+std::basic_ostream<Char, Traits>& operator<<(
+    std::basic_ostream<Char, Traits>&         os,
+    const server_load_stats_wrapper<LoadStatsBase,
+                                    QueryCntType,
+                                    ErrorCntType,
+                                    FatalCntType,
+                                    LatencyCntType,
+                                    SeqSize>& s) {
+  os << "[";
+  s.output_stats(os);
+  os << "]";
+  return os;
+}
 
 }  // namespace maglev

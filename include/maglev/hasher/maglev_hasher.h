@@ -29,8 +29,8 @@
 
 namespace maglev {
 
-template <typename SlotArrayType   = slot_array<int>,
-          typename NodeType        = node_base<std::string>,
+template <typename NodeType        = node_base<std::string>,
+          typename SlotArrayType   = slot_array<int>,
           typename NodeManagerType = typename std::conditional<
               is_weighted_t<NodeType>::value,
               weighted_node_manager_wrapper<node_manager_base<NodeType>>,
@@ -51,8 +51,8 @@ public:
   using node_manager_item_t = typename node_manager_t::item_t;
 
   struct pick_ret_t {
-    node_manager_item_t node;          // node pointer
-    size_t              node_idx = 0;  // index in node_manager
+    node_manager_item_t node     = nullptr;  // node pointer
+    size_t              node_idx = 0;        // index in node_manager
   };
 
 protected:
