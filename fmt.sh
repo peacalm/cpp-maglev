@@ -104,21 +104,21 @@ echo "Start formatting using '${CLANG_FORMAT}' for '${FILE_SECTION}' files."
 function fmt_one() {
   ${CLANG_FORMAT} --style=file -i "$1"
   added="no-git-add"
-  if [ ${GIT_ADD} == 1 ] && [ "$2" == "cached" ]; then
+  if [ ${GIT_ADD} == 1 ] && [ "$3" == "cached" ]; then
     git add "$1"
     added="git-added"
   fi
-  echo "formatting [$2][${added}]: $1"
+  echo "formatting [$2][$3][${added}]: $1"
 }
 
 if [ ${FILE_SECTION} == ${FS_DIFF} ]; then
   files=$(echo $(git diff --name-only) | tr -s " " "\n" | grep -E ${FILE_FILTER_RE})
   cached_files=$(echo $(git diff --name-only --cached) | tr -s " " "\n" | grep -E ${FILE_FILTER_RE})
   for file in ${files}; do
-    fmt_one "${file}" "${FS_DIFF} not-cached"
+    fmt_one "${file}" "${FS_DIFF}" "not-cached"
   done
   for file in ${cached_files}; do
-    fmt_one "${file}" "${FS_DIFF} cached"
+    fmt_one "${file}" "${FS_DIFF}" "cached"
   done
 elif [ ${FILE_SECTION} == ${FS_ALL} ]; then
   for d in ${SUBDIRS}; do
