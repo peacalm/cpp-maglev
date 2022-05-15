@@ -39,9 +39,9 @@ public:
   static constexpr point_value_t unit() { return Unit; }
   static constexpr size_t        seq_size() { return SeqSize; }
 
-  // incr point of now by one unit.
+  // Incr point of now by one unit.
   void incr() { ++now_; }
-  // incr load by specific value.
+  // Incr load by specific value.
   void incr(point_value_t delta) { now_ += delta; }
 
   // Push now to seq, reset now to zero, drop oldest one in seq.
@@ -52,11 +52,11 @@ public:
     ++heartbeat_cnt_;
   }
 
-  // now is an incomplete load point
+  // Now is an incomplete load point
   point_value_t now() const { return now_; }
-  // last is a complete load point
+  // Last is a complete load point
   point_value_t last() const { return seq_.prev_item(); }
-  // sum of all complete load points
+  // Sum of all complete load points
   point_value_t sum() const { return sum_; }
 
   // Average of data in seq_, not include data of now.

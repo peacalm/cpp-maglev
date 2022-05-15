@@ -129,7 +129,7 @@ public:
   void set_fatal_rank(int r) { fatal_rank_ = r; }
   void set_latency_rank(int r) { latency_rank_ = r; }
 
-  // error rate of point now, last point, sum of all points in sliding window.
+  // Error rate of point now, last point, sum of all points in sliding window.
   double error_rate_of_now() const {
     return query_.now() > 0 ? double(error_.now()) / double(query_.now()) : 0;
   }
@@ -141,7 +141,7 @@ public:
     return query_.sum() > 0 ? double(error_.sum()) / double(query_.sum()) : 0;
   }
 
-  // fatal rate of point now, last point, sum of all points in sliding window.
+  // Fatal rate of point now, last point, sum of all points in sliding window.
   double fatal_rate_of_now() const {
     return query_.now() > 0 ? double(fatal_.now()) / double(query_.now()) : 0;
   }
@@ -153,7 +153,7 @@ public:
     return query_.sum() > 0 ? double(fatal_.sum()) / double(query_.sum()) : 0;
   }
 
-  // avg latency of point now, last point, sum of all points in sliding window.
+  // Avg latency of point now, last point, sum of all points in sliding window.
   double avg_latency_of_now() const {
     return query_.now() > 0 ? double(latency_.now()) / double(query_.now()) : 0;
   }

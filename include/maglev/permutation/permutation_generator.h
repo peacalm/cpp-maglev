@@ -24,7 +24,7 @@
 namespace maglev {
 
 /**
- * generate a permutation of number from 0 to n-1
+ * Generate a permutation of number from 0 to n-1
  * NOTICE: n must be a prime number and n > 1
  */
 class permutation_generator {
@@ -108,7 +108,7 @@ public:
 public:
   permutation_generator_with_rand(size_t n) : base_t(n), seed_(0) {}
 
-  // use same hash value for seed as default
+  // Use same hash value for seed as default.
   permutation_generator_with_rand(size_t n, hash64_t h)
       : base_t(n, h), seed_(h) {}
 

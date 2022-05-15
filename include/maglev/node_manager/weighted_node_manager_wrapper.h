@@ -35,8 +35,8 @@ public:
                                              typename node_t::weighted_t>::type;
 
 public:
-  // limit max_weight by max_weight <= avg_weight * max_avg_rate_limit, 0 means
-  // no limit
+  // Limit max_weight by max_weight <= avg_weight * max_avg_rate_limit, 0 means
+  // no limit.
   template <typename... Args>
   weighted_node_manager_wrapper(Args&&... args)
       : max_avg_rate_limit_(0), base_t(std::forward<Args>(args)...) {}

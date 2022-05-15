@@ -39,6 +39,7 @@
 #include "maglev/stats/atomic_counter.h"
 #include "maglev/stats/cycle_array.h"
 #include "maglev/stats/load_stats.h"
+#include "maglev/stats/node_stats_wrapper.h"
 #include "maglev/stats/sliding_window.h"
 #include "maglev/util/hash.h"
 #include "maglev/util/prime.h"
