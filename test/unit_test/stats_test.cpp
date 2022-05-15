@@ -13,6 +13,7 @@
 // the License.
 
 #include <atomic>
+#include <ctime>
 
 #include "unit_test.h"
 
@@ -252,4 +253,131 @@ TEST(stats, sliding_window) {
   EXPECT_EQ(w.sum(), 3);
   EXPECT_EQ(w.avg(), 3. / 2.);
   EXPECT_EQ(w.heartbeat_cnt(), 2);
+
+  maglev::sliding_window<int, 1, 4> s;
+  s.incr(1);
+  s.heartbeat();
+  s.incr(2);
+  s.heartbeat();
+  s.incr(3);
+  s.heartbeat();
+  EXPECT_EQ(s.sum(), 6);
+  s.incr(4);
+  EXPECT_EQ(s.sum(), 6);
+  s.heartbeat();
+  EXPECT_EQ(s.sum(), 10);
+  s.incr(5);
+  s.heartbeat();
+  EXPECT_EQ(s.sum(), 14);
+  EXPECT_EQ(s.avg(), 14.0 / 4.0);
+}
+
+TEST(stats, load_stats) {
+  maglev::load_stats<> a;
+  EXPECT_EQ(a.load_unit(), 1);
+  EXPECT_EQ(a.load_seq_size(), 64);
+  EXPECT_EQ(decltype(a)::load_data_t ::point_seq_t ::is_size_power_of_two(),
+            true);
+
+  a.load().incr();
+  EXPECT_EQ(a.load().now(), a.load_unit());
+
+  a.heartbeat();
+  EXPECT_EQ(a.load().now(), 0);
+  EXPECT_EQ(a.load().last(), a.load_unit());
+
+  EXPECT_EQ(a.load_rank(), 0);
+  a.set_load_rank(3);
+  EXPECT_EQ(a.load_rank(), 3);
+
+  maglev::load_stats<int, 3, 33> b;
+  EXPECT_EQ(b.load_unit(), 3);
+  EXPECT_EQ(b.load_seq_size(), 33);
+  EXPECT_EQ(decltype(b)::load_data_t ::point_seq_t ::is_size_power_of_two(),
+            false);
+
+  //
+  maglev::ban_wrapper<maglev::load_stats<long>> c;
+  EXPECT_EQ(c.consecutive_ban_cnt(), 0);
+  EXPECT_EQ(c.last_ban_time(), 0);
+  c.incr_consecutive_ban_cnt();
+  EXPECT_EQ(c.consecutive_ban_cnt(), 1);
+  auto ts = std::time(nullptr);
+  c.set_last_ban_time(ts);
+  EXPECT_EQ(c.last_ban_time(), ts);
+  maglev_watch(ts, c.last_ban_time());
+  c.set_consecutive_ban_cnt(0);
+  c.set_last_ban_time(0);
+  EXPECT_EQ(c.consecutive_ban_cnt(), 0);
+  EXPECT_EQ(c.last_ban_time(), 0);
+
+  //
+  maglev::server_load_stats_wrapper<maglev::load_stats<>> s;
+  EXPECT_EQ(s.query_rank(), 0);
+  EXPECT_EQ(s.error_rank(), 0);
+  EXPECT_EQ(s.fatal_rank(), 0);
+  EXPECT_EQ(s.latency_rank(), 0);
+
+  s.set_query_rank(1);
+  s.set_error_rank(2);
+  s.set_fatal_rank(3);
+  s.set_latency_rank(4);
+
+  EXPECT_EQ(s.query_rank(), 1);
+  EXPECT_EQ(s.error_rank(), 2);
+  EXPECT_EQ(s.fatal_rank(), 3);
+  EXPECT_EQ(s.latency_rank(), 4);
+
+  s.incr_server_load(100, 5, 1, 100 * 1000);
+  EXPECT_EQ(s.error_rate_of_now(), 0.05);
+  EXPECT_EQ(s.fatal_rate_of_now(), 0.01);
+  s.heartbeat();
+  EXPECT_EQ(s.error_rate_of_now(), 0.0);
+  EXPECT_EQ(s.fatal_rate_of_now(), 0.0);
+  EXPECT_EQ(s.error_rate_of_last(), 0.05);
+  EXPECT_EQ(s.fatal_rate_of_last(), 0.01);
+  EXPECT_EQ(s.error_rate_of_window(), 0.05);
+  EXPECT_EQ(s.fatal_rate_of_window(), 0.01);
+
+  maglev::server_load_stats_wrapper<maglev::fake_load_stats<int, 1, 4>> x;
+
+  x.incr_server_load(10, 2, 1, 100 * 1000);
+  x.heartbeat();
+  x.incr_server_load(10, 1, 0, 80 * 1000);
+  x.heartbeat();
+  x.incr_server_load(10, 0, 1, 90 * 1000);
+  x.heartbeat();
+  x.incr_server_load(10, 4, 2, 60 * 1000);
+  x.heartbeat();
+
+  x.incr_server_load(1, 0, 0, 8 * 1000);
+
+  EXPECT_EQ(x.query().sum(), 40);
+  EXPECT_EQ(x.error().sum(), 7);
+  EXPECT_EQ(x.fatal().sum(), 4);
+  EXPECT_EQ(x.latency().sum(), 330 * 1000);
+
+  EXPECT_EQ(x.query().last(), 10);
+  EXPECT_EQ(x.error().last(), 4);
+  EXPECT_EQ(x.fatal().last(), 2);
+  EXPECT_EQ(x.latency().last(), 60 * 1000);
+
+  EXPECT_EQ(x.error_rate_of_now(), 0.);
+  EXPECT_EQ(x.error_rate_of_last(), 4. / 10.);
+  EXPECT_EQ(x.error_rate_of_window(), 7. / 40.);
+
+  EXPECT_EQ(x.fatal_rate_of_now(), 0.);
+  EXPECT_EQ(x.fatal_rate_of_last(), 2. / 10.);
+  EXPECT_EQ(x.fatal_rate_of_window(), 4. / 40.);
+
+  EXPECT_EQ(x.avg_latency_of_now(), 8 * 1000. / 1.);
+  EXPECT_EQ(x.avg_latency_of_last(), 60 * 1000. / 10.);
+  EXPECT_EQ(x.avg_latency_of_window(), 330 * 1000. / 40.);
+
+  x.heartbeat();
+
+  EXPECT_EQ(x.query().sum(), 31);
+  EXPECT_EQ(x.error().sum(), 5);
+  EXPECT_EQ(x.fatal().sum(), 3);
+  EXPECT_EQ(x.latency().sum(), 238 * 1000);
 }

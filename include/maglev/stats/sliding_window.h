@@ -59,6 +59,7 @@ public:
   // sum of all complete load points
   point_value_t sum() const { return sum_; }
 
+  // Average of data in seq_, not include data of now.
   double avg() const {
     return double(sum()) /
            double(heartbeat_cnt_ < seq_size() && heartbeat_cnt_ > 0
