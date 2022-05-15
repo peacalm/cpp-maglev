@@ -21,7 +21,7 @@ namespace maglev {
 /// Index for a cycle array, integral value in [0, Size-1].
 template <size_t Size = 64>
 class cycle_index {
-  static constexpr bool is_power_of_two = ((Size & (Size - 1)) == 0);
+  static constexpr bool is_size_power_of_two_ = ((Size & (Size - 1)) == 0);
 
 public:
   using index_value_t = size_t;
@@ -30,7 +30,8 @@ public:
   cycle_index(const cycle_index& r) : i_(r.i_) {}
   cycle_index(cycle_index&& r) : i_(r.i_) {}
 
-  constexpr size_t size() const { return Size; }
+  static constexpr size_t size() { return Size; }
+  static constexpr bool is_size_power_of_two() { return is_size_power_of_two_; }
 
   index_value_t get() const { return i_; }
 
@@ -80,7 +81,9 @@ public:
 
   index_value_t next(index_value_t delta) const { return mod(i_ + delta); }
 
-  index_value_t mod(index_value_t v) const { return __mod<is_power_of_two>(v); }
+  index_value_t mod(index_value_t v) const {
+    return __mod<is_size_power_of_two_>(v);
+  }
 
   bool operator==(const cycle_index& r) const { return i_ == r.i_; }
   bool operator!=(const cycle_index& r) const { return i_ != r.i_; }
@@ -123,7 +126,6 @@ std::basic_ostream<Char, Traits>& operator<<(
 /// Cycle array with constant size. Prefer the size number to be power of 2.
 template <typename T, size_t Size = 64>
 class cycle_array {
-  static constexpr bool is_power_of_two = ((Size & (Size - 1)) == 0);
   static_assert(Size > 0, "cycle_array Size must greater than 0.");
 
 public:
@@ -134,7 +136,10 @@ public:
 public:
   cycle_array() : i_(0) { a_.fill(T{}); }
 
-  constexpr size_t size() const { return Size; }
+  static constexpr size_t size() { return Size; }
+  static constexpr bool   is_size_power_of_two() {
+      return index_t::is_size_power_of_two();
+  }
 
   const index_t& index() const { return i_; }
   index_t&       index() { return i_; }

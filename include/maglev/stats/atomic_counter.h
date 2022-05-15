@@ -34,7 +34,7 @@ public:
   atomic_counter(value_t v = 0) : cnt_(v) {}
   atomic_counter(const atomic_counter& r) : cnt_(r.get()) {}
 
-  constexpr value_t unit() const { return Unit; }
+  static constexpr value_t unit() { return Unit; }
 
   value_t get() const noexcept { return cnt_.load(std::memory_order_relaxed); }
 

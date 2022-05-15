@@ -36,8 +36,8 @@ public:
 public:
   sliding_window() : now_(0), sum_(0), heartbeat_cnt_(0) {}
 
-  constexpr point_value_t unit() const { return Unit; }
-  constexpr size_t        seq_size() const { return SeqSize; }
+  static constexpr point_value_t unit() { return Unit; }
+  static constexpr size_t        seq_size() { return SeqSize; }
 
   // incr point of now by one unit.
   void incr() { ++now_; }
