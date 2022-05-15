@@ -15,7 +15,8 @@
 #include "unit_test.h"
 
 TEST(stats, node_stats_wrapper) {
-  using node_t = maglev::node_stats_wrapper<maglev::node_base<int>, maglev::load_stats<int, 1, 64>>;
+  using node_t = maglev::node_stats_wrapper<maglev::node_base<int>,
+                                            maglev::load_stats<int, 1, 64>>;
   node_t a(1);
   EXPECT_EQ(a.id(), 1);
   EXPECT_EQ(a.load().now(), 0);
@@ -25,5 +26,4 @@ TEST(stats, node_stats_wrapper) {
   EXPECT_EQ(a.load().now(), 0);
   EXPECT_EQ(a.load().last(), 1);
   EXPECT_EQ(a.load().sum(), 1);
-
 }
