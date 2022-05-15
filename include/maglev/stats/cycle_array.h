@@ -157,6 +157,11 @@ public:
   void push(const item_t& i) { a_[i_++] = i; }
   void push(item_t&& i) { a_[i_++] = std::move(i); }
 
+  void clear() {
+    a_.fill(T{});
+    i_ = 0;
+  }
+
 private:
   std::array<item_t, Size> a_;
   index_t                  i_ = 0;

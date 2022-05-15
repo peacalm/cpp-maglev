@@ -226,6 +226,12 @@ TEST(stats, cycle_array) {
   EXPECT_EQ(a.curr_item(), 10);
   EXPECT_EQ(a.next_item(), 11);
   EXPECT_EQ(a.prev_item(), 9);
+
+  a.clear();
+  EXPECT_EQ(a.index(), 0);
+  EXPECT_EQ(a.curr_item(), 0);
+  EXPECT_EQ(a.next_item(), 0);
+  EXPECT_EQ(a.prev_item(), 0);
 }
 
 TEST(stats, sliding_window) {
