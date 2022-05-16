@@ -94,7 +94,8 @@ public:
       std::basic_ostream<Char, Traits>& os) const {
     os << "<n:" << load().now() << ",l:" << load().last()
        << ",s:" << load().sum();
-    if (load_rank()) os << ",r:" << load_rank();
+    os << ",avg:" << load().avg();
+    if (load_rank()) os << ",rnk:" << load_rank();
     os << ",c:" << load().heartbeat_cnt() << ">";
     return os;
   }
@@ -260,9 +261,13 @@ public:
        << fatal().last() << "," << avg_latency_of_last() << ")";
     os << ",s:(" << query().sum() << "," << error().sum() << ","
        << fatal().sum() << "," << avg_latency_of_window() << ")";
+    // avg query per heartbeat, avg error rate, avg fatal rate
+    os << ",avg:(q:" << query().avg() << ",er:" << error_rate_of_window()
+       << ",fr:" << fatal_rate_of_window() << ")";
+    // ranks
     if (query_rank() || error_rank() || fatal_rank() || latency_rank()) {
-      os << ",r:(" << query_rank() << "," << error_rank() << "," << fatal_rank()
-         << "," << latency_rank() << ")";
+      os << ",rnk:(" << query_rank() << "," << error_rank() << ","
+         << fatal_rank() << "," << latency_rank() << ")";
     }
     os << ">";
     return os;

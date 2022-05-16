@@ -192,7 +192,7 @@ TEST(hasher, maglev_balancer_unweighted_server_stats) {
       b;
   for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
   b.maglev_hasher().build();
-  for (int i = 0; i < 12345; ++i) {
+  for (int i = 0; i < 1234567; ++i) {
     auto ret = b.pick_with_auto_hash(i);
 
     ret.node->incr_load();
@@ -208,7 +208,7 @@ TEST(hasher, maglev_balancer_unweighted_server_stats) {
     ret.node->incr_server_load(1, error, fatal, latency);
     b.global_load().incr_server_load(1, error, fatal, latency);
 
-    if (i > 0 && i % 100 == 0) { b.heartbeat(); }
+    if (i > 0 && i % 300 == 0) { b.heartbeat(); }
   }
   maglev_watch_with_std_cout(b.node_manager());
   maglev_watch_with_std_cout(b.global_load());
