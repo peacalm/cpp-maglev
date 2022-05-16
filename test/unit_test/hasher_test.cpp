@@ -157,6 +157,7 @@ TEST(hasher, maglev_balancer) {
   maglev_watch_with_std_cout(b.node_manager());
   maglev_watch_with_std_cout(b.global_load());
   maglev_watch_with_std_cout(b.heartbeat_cnt());
+  maglev_watch(b.banned_cnt());
 }
 
 TEST(hasher, maglev_balancer_server_stats) {
@@ -183,6 +184,7 @@ TEST(hasher, maglev_balancer_server_stats) {
   maglev_watch_with_std_cout(b.node_manager());
   maglev_watch_with_std_cout(b.global_load());
   maglev_watch_with_std_cout(b.heartbeat_cnt());
+  maglev_watch(b.banned_cnt());
 }
 
 TEST(hasher, maglev_balancer_unweighted_server_stats) {
@@ -192,8 +194,12 @@ TEST(hasher, maglev_balancer_unweighted_server_stats) {
       b;
   for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
   b.maglev_hasher().build();
-  for (int i = 0; i < 1234567; ++i) {
+
+  int total_q      = 1234567;
+  int consistent_q = 0;
+  for (int i = 0; i < total_q; ++i) {
     auto ret = b.pick_with_auto_hash(i);
+    consistent_q += ret.is_consistent;
 
     ret.node->incr_load();
     b.global_load().incr_load();
@@ -214,4 +220,6 @@ TEST(hasher, maglev_balancer_unweighted_server_stats) {
   maglev_watch_with_std_cout(b.global_load());
   maglev_watch_with_std_cout(b.heartbeat_cnt());
   maglev_watch_with_std_cout(*b.node_manager().find_by_node_id("3"));  // banned
+  maglev_watch(b.banned_cnt());
+  maglev_watch(total_q, consistent_q, 1.0 * consistent_q / total_q);
 }

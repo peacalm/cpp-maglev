@@ -202,15 +202,18 @@ struct balance_strategy {
   }
 
   // heartbeat
+  // return banned node count
 
   template <typename LoadStatsType, typename NodeManagerType>
-  void heartbeat(const LoadStatsType& g, NodeManagerType& nm) const {}
+  int heartbeat(const LoadStatsType& g, NodeManagerType& nm) const {
+    return 0;
+  }
 
   template <typename PointValueType,
             size_t LoadSeqSize,
             typename NodeManagerType>
-  void heartbeat(const load_stats<PointValueType, LoadSeqSize>& g,
-                 NodeManagerType&                               n) const {
+  int heartbeat(const load_stats<PointValueType, LoadSeqSize>& g,
+                NodeManagerType&                               n) const {
     using node_ptr_t = typename NodeManagerType::node_ptr_t;
 
     // load rank
@@ -218,6 +221,8 @@ struct balance_strategy {
       return l->load().sum() > r->load().sum();
     });
     for (size_t i = 0; i < n.size(); ++i) { n[i]->set_load_rank(i + 1); }
+
+    return 0;
   }
 
   template <typename LoadStatsBase,
@@ -225,28 +230,27 @@ struct balance_strategy {
             typename LatencyCntType,
             size_t SeqSize,
             typename NodeManagerType>
-  void heartbeat(const server_load_stats_wrapper<LoadStatsBase,
-                                                 QueryCntType,
-                                                 LatencyCntType,
-                                                 SeqSize>& g,
-                 NodeManagerType&                          n) const {
-    server_heartbeat(g, n);
+  int heartbeat(const server_load_stats_wrapper<LoadStatsBase,
+                                                QueryCntType,
+                                                LatencyCntType,
+                                                SeqSize>& g,
+                NodeManagerType&                          n) const {
+    return server_heartbeat(g, n);
   }
 
   template <typename QueryCntType,
             typename LatencyCntType,
             size_t SeqSize,
             typename NodeManagerType>
-  void heartbeat(
+  int heartbeat(
       const unweighted_server_load_stats<QueryCntType, LatencyCntType, SeqSize>&
                        g,
       NodeManagerType& n) const {
-    server_heartbeat(g, n);
+    return server_heartbeat(g, n);
   }
 
   template <typename ServerLoadStatsType, typename NodeManagerType>
-  void server_heartbeat(const ServerLoadStatsType& g,
-                        NodeManagerType&           n) const {
+  int server_heartbeat(const ServerLoadStatsType& g, NodeManagerType& n) const {
     using node_ptr_t = typename NodeManagerType::node_ptr_t;
 
     // load rank
@@ -280,17 +284,20 @@ struct balance_strategy {
     for (size_t i = 0; i < n.size(); ++i) { n[i]->set_latency_rank(i + 1); }
 
     // ban
+    int banned_cnt = 0;
     for (const auto& i : n) {
       if (should_ban_by_delay_recover(i->load_stats(), g, n.size())) {
-        // pass
+        ++banned_cnt;
       } else if (should_ban_by_fatal(i->load_stats(), g, n.size())) {
         i->incr_consecutive_ban_cnt();
         i->set_last_ban_time(std::time(nullptr));
+        ++banned_cnt;
       } else if (i->query().now() > 0 && i->fatal().now() == 0 &&
                  i->query().last() > 0 && i->fatal().last() == 0) {
         i->set_consecutive_ban_cnt(0);
       }
     }
+    return banned_cnt;
   }
 };
 
@@ -399,7 +406,7 @@ public:
 
   void heartbeat() {
     auto nm_copy = node_manager();
-    balance_strategy().heartbeat(global_load(), nm_copy);
+    banned_cnt_  = balance_strategy().heartbeat(global_load(), nm_copy);
 
     for (auto i : node_manager()) { i->heartbeat(); }
     global_load_.heartbeat();
@@ -409,6 +416,7 @@ public:
   const load_stats_t& global_load() const { return global_load_; }
 
   size_t heartbeat_cnt() const { return global_load().heartbeat_cnt(); }
+  int    banned_cnt() const { return banned_cnt_; }
 
 protected:
   std::atomic<maglev_hasher_ptr_t> maglev_hasher_{nullptr};
@@ -417,6 +425,7 @@ protected:
   load_stats_t global_load_;
 
   balance_strategy_t balance_strategy_;
+  int                banned_cnt_ = 0;
 };
 
 }  // namespace maglev
