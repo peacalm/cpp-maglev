@@ -87,7 +87,7 @@ public:
   }
 
   template <typename KeyType, typename HashType = def_hash_t<KeyType>>
-  pick_ret_t pick_with_auto_hash(const KeyType& key) {
+  pick_ret_t pick_with_auto_hash(const KeyType& key) const {
     static auto h = HashType{};
     return pick(h(key));
   }

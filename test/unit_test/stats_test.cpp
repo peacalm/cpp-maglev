@@ -37,7 +37,8 @@ TEST(stats, atomic_counter) {
   EXPECT_EQ(a.unit(), 1);
 
   // unit 100
-  maglev::atomic_counter<int, 100> b;
+  maglev::atomic_counter<int> b;
+  b.set(100);
   EXPECT_EQ(b.unit(), 100);
 
   EXPECT_EQ(++b, 100);
@@ -260,7 +261,7 @@ TEST(stats, sliding_window) {
   EXPECT_EQ(w.avg(), 3. / 2.);
   EXPECT_EQ(w.heartbeat_cnt(), 2);
 
-  maglev::sliding_window<int, 1, 4> s;
+  maglev::sliding_window<int, 4> s;
   s.incr(1);
   s.heartbeat();
   s.incr(2);
@@ -296,7 +297,8 @@ TEST(stats, load_stats) {
   a.set_load_rank(3);
   EXPECT_EQ(a.load_rank(), 3);
 
-  maglev::load_stats<int, 3, 33> b;
+  maglev::load_stats<int, 33> b;
+  b.set_load_unit(3);
   EXPECT_EQ(b.load_unit(), 3);
   EXPECT_EQ(b.load_seq_size(), 33);
   EXPECT_EQ(decltype(b)::load_data_t ::point_seq_t ::is_size_power_of_two(),
@@ -349,7 +351,7 @@ TEST(stats, load_stats) {
   EXPECT_EQ(s.error_rate_of_window(), 0.05);
   EXPECT_EQ(s.fatal_rate_of_window(), 0.01);
 
-  maglev::server_load_stats_wrapper<maglev::fake_load_stats<int, 1, 4>> x;
+  maglev::server_load_stats_wrapper<maglev::fake_load_stats<int, 4>> x;
 
   x.incr_server_load(10, 2, 1, 100 * 1000);
   x.heartbeat();

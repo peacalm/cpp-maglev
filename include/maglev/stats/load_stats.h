@@ -21,12 +21,10 @@
 namespace maglev {
 
 /// Fake load stats.
-template <typename PointValueType    = unsigned long long,
-          PointValueType LoadUnit    = 1,
-          size_t         LoadSeqSize = 64>
+template <typename PointValueType = unsigned long long, size_t LoadSeqSize = 64>
 class fake_load_stats {
 public:
-  using load_data_t  = sliding_window<PointValueType, LoadUnit, LoadSeqSize>;
+  using load_data_t  = sliding_window<PointValueType, LoadSeqSize>;
   using load_value_t = typename load_data_t::point_value_t;
 
   static constexpr load_value_t load_unit() { return load_data_t::unit(); }
@@ -45,25 +43,23 @@ public:
 template <typename Char,
           typename Traits,
           typename PointValueType,
-          PointValueType LoadUnit,
-          size_t         LoadSeqSize>
+          size_t LoadSeqSize>
 std::basic_ostream<Char, Traits>& operator<<(
-    std::basic_ostream<Char, Traits>&                             os,
-    const fake_load_stats<PointValueType, LoadUnit, LoadSeqSize>& s) {
+    std::basic_ostream<Char, Traits>&                   os,
+    const fake_load_stats<PointValueType, LoadSeqSize>& s) {
   return os;
 }
 
 /// To record a node's load.
-template <typename PointValueType    = unsigned long long,
-          PointValueType LoadUnit    = 1,
-          size_t         LoadSeqSize = 64>
+template <typename PointValueType = unsigned long long, size_t LoadSeqSize = 64>
 class load_stats {
 public:
-  using load_data_t  = sliding_window<PointValueType, LoadUnit, LoadSeqSize>;
+  using load_data_t  = sliding_window<PointValueType, LoadSeqSize>;
   using load_value_t = typename load_data_t::point_value_t;
 
-  static constexpr load_value_t load_unit() { return load_data_t::unit(); }
   static constexpr size_t load_seq_size() { return load_data_t::seq_size(); }
+  load_value_t            load_unit() const { return load_.unit(); }
+  void                    set_load_unit(load_value_t u) { load_.set_unit(u); }
 
   // A load_stats must have a heartbeat() method.
   void heartbeat() { load_.heartbeat(); }
@@ -75,7 +71,8 @@ public:
 
   void set_load_rank(int r) { load_rank_ = r; }
 
-  void incr_load(load_value_t d = load_unit()) { load_.incr(d); }
+  void incr_load() { load_.incr(load_unit()); }
+  void incr_load(load_value_t d) { load_.incr(d); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
@@ -83,6 +80,7 @@ public:
     os << "n:" << load().now() << ",l:" << load().last()
        << ",s:" << load().sum();
     if (load_rank()) os << ",r:" << load_rank();
+    os << ",c:" << load().heartbeat_cnt();
     return os;
   }
 
@@ -94,11 +92,10 @@ private:
 template <typename Char,
           typename Traits,
           typename PointValueType,
-          PointValueType LoadUnit,
-          size_t         LoadSeqSize>
+          size_t LoadSeqSize>
 std::basic_ostream<Char, Traits>& operator<<(
-    std::basic_ostream<Char, Traits>&                        os,
-    const load_stats<PointValueType, LoadUnit, LoadSeqSize>& s) {
+    std::basic_ostream<Char, Traits>&              os,
+    const load_stats<PointValueType, LoadSeqSize>& s) {
   os << "[";
   s.output_stats(os);
   os << "]";
@@ -160,10 +157,10 @@ public:
   using fatal_cnt_t   = FatalCntType;
   using latency_cnt_t = LatencyCntType;
 
-  using query_data_t   = sliding_window<query_cnt_t, 1, SeqSize>;
-  using error_data_t   = sliding_window<error_cnt_t, 1, SeqSize>;
-  using fatal_data_t   = sliding_window<fatal_cnt_t, 1, SeqSize>;
-  using latency_data_t = sliding_window<latency_cnt_t, 1, SeqSize>;
+  using query_data_t   = sliding_window<query_cnt_t, SeqSize>;
+  using error_data_t   = sliding_window<error_cnt_t, SeqSize>;
+  using fatal_data_t   = sliding_window<fatal_cnt_t, SeqSize>;
+  using latency_data_t = sliding_window<latency_cnt_t, SeqSize>;
 
   // A load_stats must have a heartbeat() method.
   void heartbeat() {

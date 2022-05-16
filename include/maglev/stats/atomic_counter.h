@@ -19,8 +19,8 @@
 
 namespace maglev {
 
-/// Atomic integral counter, `Unit` used as the operand for operator ++ and --.
-template <typename IntType = int, IntType Unit = 1>
+/// Atomic integral counter.
+template <typename IntType = int>
 class atomic_counter {
   static_assert(std::is_integral<IntType>::value &&
                     !std::is_same<IntType, bool>::value,
@@ -31,10 +31,12 @@ public:
   using counter_t = typename std::atomic<value_t>;
 
 public:
-  atomic_counter(value_t v = 0) : cnt_(v) {}
-  atomic_counter(const atomic_counter& r) : cnt_(r.get()) {}
+  atomic_counter(value_t v = 0, value_t u = 1) : cnt_(v), unit_(u) {}
+  atomic_counter(const atomic_counter& r) : cnt_(r.get()), unit_(r.unit()) {}
 
-  static constexpr value_t unit() { return Unit; }
+  // unit() used as the operand for operator ++ and --
+  value_t unit() const { return unit_; }
+  void    set_unit(value_t u) { unit_ = u; }
 
   value_t get() const noexcept { return cnt_.load(std::memory_order_relaxed); }
 
@@ -50,6 +52,7 @@ public:
   }
   atomic_counter& operator=(const atomic_counter& r) noexcept {
     set(r.get());
+    unit_ = r.unit();
     return *this;
   }
   atomic_counter& operator+=(value_t v) noexcept {
@@ -97,6 +100,7 @@ protected:
 
 private:
   counter_t cnt_{0};
+  value_t   unit_{1};
 };
 
 }  // namespace maglev

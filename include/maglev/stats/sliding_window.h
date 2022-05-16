@@ -24,9 +24,8 @@ namespace maglev {
 /// Each time a `heartbeat()` it will generate a integer, make a copy of "now"
 /// and push it into window, then clear "now".
 template <typename PointValueType   = unsigned long long,
-          PointValueType Unit       = 1,
-          size_t         SeqSize    = 64,
-          typename CounterType      = atomic_counter<PointValueType, Unit>,
+          size_t SeqSize            = 64,
+          typename CounterType      = atomic_counter<PointValueType>,
           typename PointSeqType     = cycle_array<PointValueType, SeqSize>,
           typename HeartbeatCntType = size_t>
 class sliding_window {
@@ -39,8 +38,9 @@ public:
 public:
   sliding_window() : now_(0), sum_(0), heartbeat_cnt_(0) {}
 
-  static constexpr point_value_t unit() { return Unit; }
-  static constexpr size_t        seq_size() { return SeqSize; }
+  static constexpr size_t seq_size() { return SeqSize; }
+  point_value_t           unit() const { return now_.unit(); }
+  void                    set_unit(point_value_t u) { now_.set_unit(u); }
 
   // Incr point of now by one unit.
   void incr() { ++now_; }
