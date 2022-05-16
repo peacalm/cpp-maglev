@@ -25,6 +25,7 @@ namespace maglev {
 template <typename NodeMetaType, typename LoadStatsType>
 class load_stats_wrapper : public NodeMetaType, public LoadStatsType {
 public:
+  using has_stats_t  = void;  // for type traits
   using node_meta_t  = NodeMetaType;
   using load_stats_t = LoadStatsType;
 

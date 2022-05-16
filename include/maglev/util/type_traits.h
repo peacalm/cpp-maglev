@@ -18,6 +18,8 @@
 
 namespace maglev {
 
+/* ***** is slot counted ***** */
+
 template <typename NodeT, typename = void>
 struct is_slot_counted : std::false_type {};
 
@@ -32,6 +34,8 @@ using is_slot_counted_t = typename is_slot_counted<NodeT>::type;
 template <typename NodeT>
 constexpr bool is_slot_counted_v = is_slot_counted_t<NodeT>::value;
 
+/* ***** is weighted ***** */
+
 template <typename NodeT, typename = void>
 struct is_weighted : std::false_type {};
 
@@ -44,5 +48,20 @@ using is_weighted_t = typename is_weighted<NodeT>::type;
 // variable template, since C++14
 template <typename NodeT>
 constexpr bool is_weighted_v = is_weighted_t<NodeT>::value;
+
+/* ***** has stats ***** */
+
+template <typename NodeT, typename = void>
+struct has_stats : std::false_type {};
+
+template <class NodeT>
+struct has_stats<NodeT, typename NodeT::has_stats_t> : std::true_type {};
+
+template <typename NodeT>
+using has_stats_t = typename has_stats<NodeT>::type;
+
+// variable template, since C++14
+template <typename NodeT>
+constexpr bool has_stats_v = has_stats_t<NodeT>::value;
 
 }  // namespace maglev

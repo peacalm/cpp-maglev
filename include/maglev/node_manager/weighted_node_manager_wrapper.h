@@ -18,6 +18,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "maglev/stats/load_stats.h"
 #include "maglev/util/type_traits.h"
 
 namespace maglev {
@@ -44,6 +45,15 @@ public:
   virtual void ready_go() override {
     base_t::ready_go();
     init_weight();
+    __init_load_units<has_stats_v<node_t>>(10000);
+  }
+
+  void init_load_units(size_t factor = 10000) {
+    for (const auto& n : *this) {
+      if (n->weight() > 0) {
+        n->set_load_unit(size_t(1.0 * factor * avg_weight() / n->weight()));
+      }
+    }
   }
 
   void set_max_avg_rate_limit(double r) { max_avg_rate_limit_ = r; }
@@ -79,6 +89,18 @@ public:
 
   bool is_max_weight_limited() const {
     return limited_max_weight() < max_weight();
+  }
+
+private:
+  template <bool node_has_stats>
+  void __init_load_units(size_t factor) {}
+
+  template <>
+  void __init_load_units<false>(size_t factor) {}
+
+  template <>
+  void __init_load_units<true>(size_t factor) {
+    init_load_units(factor);
   }
 
 private:

@@ -34,7 +34,9 @@ public:
   void heartbeat() {}
 
   /*
-  // shoulde= mock these methonds in derived class
+  // should mock these methonds in derived class
+  load_value_t load_unit() const;
+  void         set_load_unit(load_value_t u);
   heartbeat_cnt_t heartbeat_cnt() const;
   load_data_t&       load();
   const load_data_t& load() const;
@@ -71,11 +73,12 @@ public:
   using heartbeat_cnt_t = typename load_data_t::heartbeat_cnt_t;
 
   static constexpr size_t load_seq_size() { return load_data_t::seq_size(); }
-  load_value_t            load_unit() const { return load_.unit(); }
-  void                    set_load_unit(load_value_t u) { load_.set_unit(u); }
 
   // A load_stats must have a heartbeat() method.
   void heartbeat() { load_.heartbeat(); }
+
+  load_value_t load_unit() const { return load_.unit(); }
+  void         set_load_unit(load_value_t u) { load_.set_unit(u); }
 
   heartbeat_cnt_t heartbeat_cnt() const { return load().heartbeat_cnt(); }
 
@@ -325,6 +328,10 @@ public:
   heartbeat_cnt_t heartbeat_cnt() const {
     return base_t::query().heartbeat_cnt();
   }
+
+  load_value_t load_unit() const { return 1; }
+  void         set_load_unit(load_value_t u) {}
+
   load_data_t&       load() { return base_t::query(); }
   const load_data_t& load() const { return base_t::query(); }
   int                load_rank() const { return base_t::query_rank(); }
