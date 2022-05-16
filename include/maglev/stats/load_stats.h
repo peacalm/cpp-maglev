@@ -27,7 +27,6 @@ public:
   using load_data_t  = sliding_window<PointValueType, LoadSeqSize>;
   using load_value_t = typename load_data_t::point_value_t;
 
-  static constexpr load_value_t load_unit() { return load_data_t::unit(); }
   static constexpr size_t load_seq_size() { return load_data_t::seq_size(); }
 
   // A load_stats must have a heartbeat() method.
