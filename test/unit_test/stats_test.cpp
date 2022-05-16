@@ -38,7 +38,7 @@ TEST(stats, atomic_counter) {
 
   // unit 100
   maglev::atomic_counter<int> b;
-  b.set(100);
+  b.set_unit(100);
   EXPECT_EQ(b.unit(), 100);
 
   EXPECT_EQ(++b, 100);

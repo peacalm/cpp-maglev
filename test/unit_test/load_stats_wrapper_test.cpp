@@ -16,7 +16,7 @@
 
 TEST(stats, node_stats_wrapper) {
   using node_t = maglev::load_stats_wrapper<maglev::node_base<int>,
-                                            maglev::load_stats<int, 1, 64>>;
+                                            maglev::load_stats<int, 64>>;
   node_t a(1);
   EXPECT_EQ(a.id(), 1);
   EXPECT_EQ(a.load().now(), 0);
