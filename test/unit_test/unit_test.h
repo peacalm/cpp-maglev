@@ -27,6 +27,7 @@
 #define maglev_watch_with_std_cout(...)
 #endif
 
+#include "maglev/hasher/maglev_balancer.h"
 #include "maglev/hasher/maglev_hasher.h"
 #include "maglev/hasher/slot_array.h"
 #include "maglev/node/node_base.h"

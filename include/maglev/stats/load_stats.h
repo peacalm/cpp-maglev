@@ -24,17 +24,30 @@ namespace maglev {
 template <typename PointValueType = unsigned long long, size_t LoadSeqSize = 64>
 class fake_load_stats {
 public:
-  using load_data_t  = sliding_window<PointValueType, LoadSeqSize>;
-  using load_value_t = typename load_data_t::point_value_t;
+  using load_data_t     = sliding_window<PointValueType, LoadSeqSize>;
+  using load_value_t    = typename load_data_t::point_value_t;
+  using heartbeat_cnt_t = typename load_data_t::heartbeat_cnt_t;
 
   static constexpr size_t load_seq_size() { return load_data_t::seq_size(); }
 
   // A load_stats must have a heartbeat() method.
   void heartbeat() {}
 
+  /*
+  // shoulde= mock these methonds in derived class
+  heartbeat_cnt_t heartbeat_cnt() const;
+  load_data_t&       load();
+  const load_data_t& load() const;
+  int load_rank() const;
+  void set_load_rank(int r);
+  void incr_load();
+  void incr_load(load_value_t d);
+  */
+
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
       std::basic_ostream<Char, Traits>& os) const {
+    os << "<>";
     return os;
   }
 };
@@ -53,8 +66,9 @@ std::basic_ostream<Char, Traits>& operator<<(
 template <typename PointValueType = unsigned long long, size_t LoadSeqSize = 64>
 class load_stats {
 public:
-  using load_data_t  = sliding_window<PointValueType, LoadSeqSize>;
-  using load_value_t = typename load_data_t::point_value_t;
+  using load_data_t     = sliding_window<PointValueType, LoadSeqSize>;
+  using load_value_t    = typename load_data_t::point_value_t;
+  using heartbeat_cnt_t = typename load_data_t::heartbeat_cnt_t;
 
   static constexpr size_t load_seq_size() { return load_data_t::seq_size(); }
   load_value_t            load_unit() const { return load_.unit(); }
@@ -62,6 +76,8 @@ public:
 
   // A load_stats must have a heartbeat() method.
   void heartbeat() { load_.heartbeat(); }
+
+  heartbeat_cnt_t heartbeat_cnt() const { return load().heartbeat_cnt(); }
 
   load_data_t&       load() { return load_; }
   const load_data_t& load() const { return load_; }
@@ -76,10 +92,10 @@ public:
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
       std::basic_ostream<Char, Traits>& os) const {
-    os << "n:" << load().now() << ",l:" << load().last()
+    os << "<n:" << load().now() << ",l:" << load().last()
        << ",s:" << load().sum();
     if (load_rank()) os << ",r:" << load_rank();
-    os << ",c:" << load().heartbeat_cnt();
+    os << ",c:" << load().heartbeat_cnt() << ">";
     return os;
   }
 
@@ -121,7 +137,7 @@ public:
       std::basic_ostream<Char, Traits>& os) const {
     base_t::output_stats(os);
     if (last_ban_time() != 0 || consecutive_ban_cnt() != 0) {
-      os << "ban:(" << last_ban_time() << "," << consecutive_ban_cnt() << ")";
+      os << ",ban:(" << last_ban_time() << "," << consecutive_ban_cnt() << ")";
     }
     return os;
   }
@@ -141,19 +157,17 @@ std::basic_ostream<Char, Traits>& operator<<(
 }
 
 /// To describe a server's load in RPC scene.
-template <typename LoadStatsBase,
-          typename QueryCntType   = unsigned long long,
-          typename ErrorCntType   = unsigned long long,
-          typename FatalCntType   = unsigned long long,
+template <typename LoadStatsBase  = load_stats<>,
+          typename QueryCntType   = unsigned int,
           typename LatencyCntType = unsigned long long,
           size_t SeqSize          = LoadStatsBase::load_seq_size()>
-class server_load_stats_wrapper : public LoadStatsBase {
-  using base_t = LoadStatsBase;
+class server_load_stats_wrapper : public ban_wrapper<LoadStatsBase> {
+  using base_t = ban_wrapper<LoadStatsBase>;
 
 public:
   using query_cnt_t   = QueryCntType;
-  using error_cnt_t   = ErrorCntType;
-  using fatal_cnt_t   = FatalCntType;
+  using error_cnt_t   = QueryCntType;
+  using fatal_cnt_t   = QueryCntType;
   using latency_cnt_t = LatencyCntType;
 
   using query_data_t   = sliding_window<query_cnt_t, SeqSize>;
@@ -180,10 +194,10 @@ public:
   const fatal_data_t&   fatal() const { return fatal_; }
   const latency_data_t& latency() const { return latency_; }
 
-  int query_rank() { return query_rank_; }
-  int error_rank() { return error_rank_; }
-  int fatal_rank() { return fatal_rank_; }
-  int latency_rank() { return latency_rank_; }
+  int query_rank() const { return query_rank_; }
+  int error_rank() const { return error_rank_; }
+  int fatal_rank() const { return fatal_rank_; }
+  int latency_rank() const { return latency_rank_; }
 
   void set_query_rank(int r) { query_rank_ = r; }
   void set_error_rank(int r) { error_rank_ = r; }
@@ -240,8 +254,8 @@ public:
   std::basic_ostream<Char, Traits>& output_stats(
       std::basic_ostream<Char, Traits>& os) const {
     base_t::output_stats(os);
-    os << "n:(" << query().now() << "," << error().now() << "," << fatal().now()
-       << "," << avg_latency_of_now() << ")";
+    os << ",<n:(" << query().now() << "," << error().now() << ","
+       << fatal().now() << "," << avg_latency_of_now() << ")";
     os << ",l:(" << query().last() << "," << error().last() << ","
        << fatal().last() << "," << avg_latency_of_last() << ")";
     os << ",s:(" << query().sum() << "," << error().sum() << ","
@@ -250,6 +264,7 @@ public:
       os << ",r:(" << query_rank() << "," << error_rank() << "," << fatal_rank()
          << "," << latency_rank() << ")";
     }
+    os << ">";
     return os;
   }
 
@@ -269,18 +284,68 @@ template <typename Char,
           typename Traits,
           typename LoadStatsBase,
           typename QueryCntType,
-          typename ErrorCntType,
-          typename FatalCntType,
           typename LatencyCntType,
           size_t SeqSize>
 std::basic_ostream<Char, Traits>& operator<<(
     std::basic_ostream<Char, Traits>&         os,
     const server_load_stats_wrapper<LoadStatsBase,
                                     QueryCntType,
-                                    ErrorCntType,
-                                    FatalCntType,
                                     LatencyCntType,
                                     SeqSize>& s) {
+  os << "[";
+  s.output_stats(os);
+  os << "]";
+  return os;
+}
+
+/// To describe a server's load in RPC scene.
+template <typename QueryCntType   = unsigned int,
+          typename LatencyCntType = unsigned long long,
+          size_t SeqSize          = 64>
+class unweighted_server_load_stats
+    : public server_load_stats_wrapper<fake_load_stats<QueryCntType>,
+                                       QueryCntType,
+                                       LatencyCntType,
+                                       SeqSize> {
+  using base_t = server_load_stats_wrapper<fake_load_stats<QueryCntType>,
+                                           QueryCntType,
+                                           LatencyCntType,
+                                           SeqSize>;
+
+public:
+  using heartbeat_cnt_t = typename base_t::heartbeat_cnt_t;
+  using load_data_t     = typename base_t::query_data_t;
+  using load_value_t    = typename base_t::load_value_t;
+
+  heartbeat_cnt_t heartbeat_cnt() const {
+    return base_t::query().heartbeat_cnt();
+  }
+  load_data_t&       load() { return base_t::query(); }
+  const load_data_t& load() const { return base_t::query(); }
+  int                load_rank() const { return base_t::query_rank(); }
+
+  void set_load_rank(int r) {}
+  void incr_load() {}
+  void incr_load(load_value_t d) {}
+
+  template <typename Char, typename Traits>
+  std::basic_ostream<Char, Traits>& output_stats(
+      std::basic_ostream<Char, Traits>& os) const {
+    base_t::output_stats(os);
+    os << ",c:" << heartbeat_cnt();
+    return os;
+  }
+};
+
+template <typename Char,
+          typename Traits,
+          typename QueryCntType,
+          typename LatencyCntType,
+          size_t SeqSize>
+std::basic_ostream<Char, Traits>& operator<<(
+    std::basic_ostream<Char, Traits>& os,
+    const unweighted_server_load_stats<QueryCntType, LatencyCntType, SeqSize>&
+        s) {
   os << "[";
   s.output_stats(os);
   os << "]";

@@ -141,3 +141,72 @@ TEST(hasher, maglev_hasher_some_zero_weight) {
     }
   }
 }
+
+TEST(hasher, maglev_balancer) {
+  maglev::maglev_balancer<> b;
+  for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
+  b.maglev_hasher().build();
+  for (int i = 0; i < 12345; ++i) {
+    auto ret = b.pick_with_auto_hash(i);
+    ret.node->incr_load();
+    b.global_load().incr_load();
+
+    if (i > 0 && i % 100 == 0) { b.heartbeat(); }
+  }
+
+  maglev_watch_with_std_cout(b.node_manager());
+  maglev_watch_with_std_cout(b.global_load());
+  maglev_watch_with_std_cout(b.heartbeat_cnt());
+}
+
+TEST(hasher, maglev_balancer_server_stats) {
+  maglev::maglev_balancer<maglev::maglev_hasher<
+      maglev::load_stats_wrapper<maglev::node_base<std::string>,
+                                 maglev::server_load_stats_wrapper<>>>>
+      b;
+  for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
+  b.maglev_hasher().build();
+  for (int i = 0; i < 12345; ++i) {
+    auto ret = b.pick_with_auto_hash(i);
+
+    ret.node->incr_load();
+    b.global_load().incr_load();
+
+    bool fatal   = rand() % 50 == 0;
+    bool error   = fatal || rand() % 10 == 0;
+    int  latency = 100 + rand() % 50;
+    ret.node->incr_server_load(1, error, fatal, latency);
+    b.global_load().incr_server_load(1, error, fatal, latency);
+
+    if (i > 0 && i % 100 == 0) { b.heartbeat(); }
+  }
+  maglev_watch_with_std_cout(b.node_manager());
+  maglev_watch_with_std_cout(b.global_load());
+  maglev_watch_with_std_cout(b.heartbeat_cnt());
+}
+
+TEST(hasher, maglev_balancer_unweighted_server_stats) {
+  maglev::maglev_balancer<maglev::maglev_hasher<
+      maglev::load_stats_wrapper<maglev::node_base<std::string>,
+                                 maglev::unweighted_server_load_stats<>>>>
+      b;
+  for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
+  b.maglev_hasher().build();
+  for (int i = 0; i < 12345; ++i) {
+    auto ret = b.pick_with_auto_hash(i);
+
+    ret.node->incr_load();
+    b.global_load().incr_load();
+
+    bool fatal   = rand() % 50 == 0;
+    bool error   = fatal || rand() % 10 == 0;
+    int  latency = 100 + rand() % 50;
+    ret.node->incr_server_load(1, error, fatal, latency);
+    b.global_load().incr_server_load(1, error, fatal, latency);
+
+    if (i > 0 && i % 100 == 0) { b.heartbeat(); }
+  }
+  maglev_watch_with_std_cout(b.node_manager());
+  maglev_watch_with_std_cout(b.global_load());
+  maglev_watch_with_std_cout(b.heartbeat_cnt());
+}

@@ -31,6 +31,16 @@ public:
   template <typename... Args>
   load_stats_wrapper(Args&&... args)
       : node_meta_t(std::forward<Args>(args)...) {}
+
+  node_meta_t&       node_meta() { return *static_cast<node_meta_t*>(this); }
+  const node_meta_t& node_meta() const {
+    return *static_cast<node_meta_t>(this);
+  }
+
+  load_stats_t&       load_stats() { return *static_cast<load_stats_t*>(this); }
+  const load_stats_t& load_stats() const {
+    return *static_cast<load_stats_t>(this);
+  }
 };
 
 template <typename Char,
