@@ -198,9 +198,13 @@ TEST(hasher, maglev_balancer_unweighted_server_stats) {
     ret.node->incr_load();
     b.global_load().incr_load();
 
-    bool fatal   = rand() % 50 == 0;
+    bool fatal = rand() % 50 == 0;
+
+    if (ret.node->id() == "3") { fatal = true; }
+
     bool error   = fatal || rand() % 10 == 0;
     int  latency = 100 + rand() % 50;
+
     ret.node->incr_server_load(1, error, fatal, latency);
     b.global_load().incr_server_load(1, error, fatal, latency);
 
@@ -209,4 +213,5 @@ TEST(hasher, maglev_balancer_unweighted_server_stats) {
   maglev_watch_with_std_cout(b.node_manager());
   maglev_watch_with_std_cout(b.global_load());
   maglev_watch_with_std_cout(b.heartbeat_cnt());
+  maglev_watch_with_std_cout(*b.node_manager().find_by_node_id("3"));  // banned
 }
