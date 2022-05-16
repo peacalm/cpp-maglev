@@ -54,12 +54,14 @@ struct balance_strategy {
   // ========== methods =======================================================
 
   // should_balance
+
   template <typename StatsTypeA, typename StatsTypeB>
   bool should_balance(const StatsTypeA& n,
                       const StatsTypeB& g,
                       size_t            node_size) const {
     return false;
   }
+
   template <typename PointValueType, size_t LoadSeqSize>
   bool should_balance(const load_stats<PointValueType, LoadSeqSize>& n,
                       const load_stats<PointValueType, LoadSeqSize>& g,
@@ -73,6 +75,7 @@ struct balance_strategy {
     }
     return false;
   }
+
   template <typename LoadStatsBase,
             typename QueryCntType,
             typename LatencyCntType,
@@ -121,18 +124,21 @@ struct balance_strategy {
   }
 
   // should_ban
+
   template <typename StatsType>
   bool should_ban(const StatsType& n,
                   const StatsType& g,
                   size_t           node_size) const {
     return false;
   }
+
   template <typename PointValueType, size_t LoadSeqSize>
   bool should_ban(const load_stats<PointValueType, LoadSeqSize>& n,
                   const load_stats<PointValueType, LoadSeqSize>& g,
                   size_t node_size) const {
     return false;
   }
+
   template <typename LoadStatsBase,
             typename QueryCntType,
             typename LatencyCntType,
@@ -146,6 +152,23 @@ struct balance_strategy {
                                                   LatencyCntType,
                                                   SeqSize>& g,
                   size_t                                    node_size) const {
+    return should_ban_server(n, g, node_size);
+  }
+
+  template <typename QueryCntType, typename LatencyCntType, size_t SeqSize>
+  bool should_ban(
+      const unweighted_server_load_stats<QueryCntType, LatencyCntType, SeqSize>&
+          n,
+      const unweighted_server_load_stats<QueryCntType, LatencyCntType, SeqSize>&
+             g,
+      size_t node_size) const {
+    return should_ban_server(n, g, node_size);
+  }
+
+  template <typename ServerLoadStatsType>
+  bool should_ban_server(const ServerLoadStatsType& n,
+                         const ServerLoadStatsType& g,
+                         size_t                     node_size) const {
     if (n.fatal_rank() > max_fatal_rank_to_ban ||
         n.fatal_rank() > std::ceil(node_size * max_pct_of_ban_by_fatal) ||
         n.query().now() < min_query_to_ban) {
@@ -155,39 +178,22 @@ struct balance_strategy {
     return should_ban_by_fatal(n, g, node_size) ||
            should_ban_by_delay_recover(n, g, node_size);
   }
-  template <typename LoadStatsBase,
-            typename QueryCntType,
-            typename LatencyCntType,
-            size_t SeqSize>
-  bool should_ban_by_fatal(const server_load_stats_wrapper<LoadStatsBase,
-                                                           QueryCntType,
-                                                           LatencyCntType,
-                                                           SeqSize>& n,
-                           const server_load_stats_wrapper<LoadStatsBase,
-                                                           QueryCntType,
-                                                           LatencyCntType,
-                                                           SeqSize>& g,
-                           size_t node_size) const {
+
+  template <typename ServerLoadStatsType>
+  bool should_ban_by_fatal(const ServerLoadStatsType& n,
+                           const ServerLoadStatsType& g,
+                           size_t                     node_size) const {
     if (n.fatal_rate_of_now() > min_fatal_ratio_to_ban &&
         n.fatal_rate_of_last() > min_fatal_ratio_to_ban) {
       return true;
     }
     return false;
   }
-  template <typename LoadStatsBase,
-            typename QueryCntType,
-            typename LatencyCntType,
-            size_t SeqSize>
-  bool should_ban_by_delay_recover(
-      const server_load_stats_wrapper<LoadStatsBase,
-                                      QueryCntType,
-                                      LatencyCntType,
-                                      SeqSize>& n,
-      const server_load_stats_wrapper<LoadStatsBase,
-                                      QueryCntType,
-                                      LatencyCntType,
-                                      SeqSize>& g,
-      size_t                                    node_size) const {
+
+  template <typename ServerLoadStatsType>
+  bool should_ban_by_delay_recover(const ServerLoadStatsType& n,
+                                   const ServerLoadStatsType& g,
+                                   size_t                     node_size) const {
     if (n.consecutive_ban_cnt() <= 0) { return false; }
     auto delay_s = std::min(recover_delay_s << n.consecutive_ban_cnt(),
                             max_recover_delay_s);
@@ -226,6 +232,7 @@ struct balance_strategy {
                  NodeManagerType&                          n) const {
     server_heartbeat(g, n);
   }
+
   template <typename QueryCntType,
             typename LatencyCntType,
             size_t SeqSize,
