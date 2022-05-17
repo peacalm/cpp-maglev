@@ -270,17 +270,9 @@ TEST(hasher, maglev_balancer_weighted_server_stats) {
   maglev_watch_with_std_cout(b.node_manager());
   maglev_watch_with_std_cout(b.global_load());
   maglev_watch_with_std_cout(b.heartbeat_cnt());
-  maglev_watch_with_std_cout(*b.node_manager().find_by_node_id("3"));  // banned
+  maglev_watch_with_std_cout(*b.node_manager().find_by_node_id("3"));
   maglev_watch(b.banned_cnt());
   maglev_watch(total_q, consistent_q, 1.0 * consistent_q / total_q);
-  for (auto i : b.node_manager()) {
-    maglev_watch_with_std_cout(*i,
-                               i->load_unit(),
-                               1.0 * i->slot_cnt() / i->weight(),
-                               i->query().avg() / i->weight(),
-                               i->load().avg(),
-                               "\n");
-  }
 }
 
 TEST(hasher, default_balance_strategy) {
