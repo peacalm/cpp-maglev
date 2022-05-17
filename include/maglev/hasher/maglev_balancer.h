@@ -22,7 +22,7 @@
 
 namespace maglev {
 
-struct balance_strategy {
+struct default_balance_strategy {
   // ========== parameters ====================================================
 
   // balance parameters
@@ -299,11 +299,16 @@ struct balance_strategy {
     }
     return banned_cnt;
   }
+
+  // rehash, get slot index from (key, try_cnt, slot_size)
+  size_t rehash(size_t key, size_t try_cnt, size_t slot_size) const {
+    return (key + (key % 997 + 1) * try_cnt) % slot_size;
+  }
 };
 
 template <typename MaglevHasherType =
               maglev_hasher<load_stats_wrapper<node_base<>, load_stats<>>>,
-          typename BalanceStrategyType = balance_strategy>
+          typename BalanceStrategyType = default_balance_strategy>
 class maglev_balancer {
 public:
   using maglev_hasher_t     = MaglevHasherType;
@@ -382,7 +387,9 @@ public:
   pick_ret_t pick(size_t hashed_key) const {
     pick_ret_t ret;
     for (size_t try_cnt = 0; try_cnt < node_size(); ++try_cnt) {
-      ret.node_idx      = slot_array()[hashed_key % slot_size()];
+      size_t slot_idx =
+          balance_strategy().rehash(hashed_key, try_cnt, slot_size());
+      ret.node_idx      = slot_array()[slot_idx];
       ret.node          = node_manager()[ret.node_idx];
       ret.is_consistent = try_cnt == 0;
       if (balance_strategy().should_balance(
@@ -416,7 +423,8 @@ public:
   const load_stats_t& global_load() const { return global_load_; }
 
   size_t heartbeat_cnt() const { return global_load().heartbeat_cnt(); }
-  int    banned_cnt() const { return banned_cnt_; }
+
+  int banned_cnt() const { return banned_cnt_; }
 
 protected:
   std::atomic<maglev_hasher_ptr_t> maglev_hasher_{nullptr};
