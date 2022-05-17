@@ -273,3 +273,22 @@ TEST(hasher, maglev_balancer_weighted_server_stats) {
                                "\n");
   }
 }
+
+TEST(hasher, default_balance_strategy) {
+  maglev::default_balance_strategy b;
+  std::vector<unsigned long long>  keys{0,
+                                       1,
+                                       5,
+                                       INT_MAX,
+                                       maglev::def_hash_t<size_t>()(0),
+                                       maglev::def_hash_t<size_t>()(1),
+                                       maglev::def_hash_t<size_t>()(5)};
+  for (size_t key : keys) {
+    EXPECT_EQ(b.rehash(key, 0, 5003), b.rehash(key + 5003 * 100, 0, 5003));
+    EXPECT_EQ(b.rehash(key, 0, 5003),
+              b.rehash(key + 5003 * std::time(0), 0, 5003));
+    for (int t = 1; t < 10; ++t) {
+      EXPECT_NE(b.rehash(key, 0, 5003), b.rehash(key, t, 5003));
+    }
+  }
+}
