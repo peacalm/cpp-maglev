@@ -16,7 +16,7 @@
 
 #include "performance_test.h"
 
-TEST(hasher, maglev_hasher) {
+TEST(maglev_hasher, maglev_hasher) {
   maglev::maglev_hasher<
       maglev::slot_counted_node_wrapper<maglev::node_base<int>>,
       maglev::slot_array<int, 65537>>
@@ -46,7 +46,7 @@ TEST(hasher, maglev_hasher) {
                minhit / avghit);
 }
 
-TEST(hasher, maglev_hasher_zero_weight) {
+TEST(maglev_hasher, maglev_hasher_zero_weight) {
   maglev::maglev_hasher<
       maglev::weighted_node_wrapper<
           maglev::slot_counted_node_wrapper<maglev::node_base<int>>>,
@@ -77,7 +77,7 @@ TEST(hasher, maglev_hasher_zero_weight) {
                minhit / avghit);
 }
 
-TEST(hasher, maglev_hasher_weighted) {
+TEST(maglev_hasher, maglev_hasher_weighted) {
   maglev::maglev_hasher<
       maglev::weighted_node_wrapper<
           maglev::slot_counted_node_wrapper<maglev::node_base<int>>>,

@@ -27,6 +27,7 @@
 #define maglev_watch_with_std_cout(...)
 #endif
 
+#include "maglev/hasher/maglev_balancer.h"
 #include "maglev/hasher/maglev_hasher.h"
 #include "maglev/hasher/slot_array.h"
 #include "maglev/node/node_base.h"
@@ -36,6 +37,11 @@
 #include "maglev/node_manager/node_manager_base.h"
 #include "maglev/node_manager/weighted_node_manager_wrapper.h"
 #include "maglev/permutation/permutation_generator.h"
+#include "maglev/stats/atomic_counter.h"
+#include "maglev/stats/cycle_array.h"
+#include "maglev/stats/load_stats.h"
+#include "maglev/stats/load_stats_wrapper.h"
+#include "maglev/stats/sliding_window.h"
 #include "maglev/util/hash.h"
 #include "maglev/util/prime.h"
 #include "maglev/util/type_traits.h"
