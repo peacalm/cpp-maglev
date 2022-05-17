@@ -317,9 +317,10 @@ public:
   using slot_array_t        = typename maglev_hasher_t::slot_array_t;
   using node_t              = typename maglev_hasher_t::node_t;
   using node_ptr_t          = typename maglev_hasher_t::node_ptr_t;
-  using node_meta_t         = typename node_t::node_meta_t;
-  using load_stats_t        = typename node_t::load_stats_t;
-  using balance_strategy_t  = BalanceStrategyType;
+  static_assert(has_stats_v<node_t>, "Node type must have stats");
+  using node_meta_t        = typename node_t::node_meta_t;
+  using load_stats_t       = typename node_t::load_stats_t;
+  using balance_strategy_t = BalanceStrategyType;
 
   struct pick_ret_t : public maglev_hasher_t::pick_ret_t {
     bool is_consistent = true;
