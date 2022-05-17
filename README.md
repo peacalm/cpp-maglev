@@ -38,6 +38,7 @@ template <typename MaglevHasherType =
 class maglev_balancer;
 ```
 MaglevHasherType: a maglev_hasher, its node type must have stats.
+
 BalanceStrategyType: a struct contains dynamic balance parameters and methods.
 
 ## Usage Examples
