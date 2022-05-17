@@ -51,7 +51,15 @@ struct default_balance_strategy {
   int recover_delay_s     = 5;
   int max_recover_delay_s = 600;
 
+  // options
+  size_t max_try_pick_cnt = 0;  // 0 means slot_size
+
   // ========== methods =======================================================
+
+  // rehash, get slot index from (key, retry_cnt, slot_size)
+  size_t rehash(size_t key, size_t retry_cnt, size_t slot_size) const {
+    return (key + (key % 997 + 1) * retry_cnt) % slot_size;
+  }
 
   // should_balance
 
@@ -299,11 +307,6 @@ struct default_balance_strategy {
     }
     return banned_cnt;
   }
-
-  // rehash, get slot index from (key, try_cnt, slot_size)
-  size_t rehash(size_t key, size_t try_cnt, size_t slot_size) const {
-    return (key + (key % 997 + 1) * try_cnt) % slot_size;
-  }
 };
 
 template <typename MaglevHasherType =
@@ -323,7 +326,12 @@ public:
   using balance_strategy_t = BalanceStrategyType;
 
   struct pick_ret_t : public maglev_hasher_t::pick_ret_t {
-    bool is_consistent = true;
+    bool   failed        = false;
+    bool   is_consistent = true;
+    size_t retry_cnt     = 0;
+    // Different with node, node_idx if is_consistent is false
+    node_ptr_t consistent_node     = nullptr;  // node pointer
+    size_t     consistent_node_idx = 0;        // index in node_manager
   };
 
 public:
@@ -387,12 +395,25 @@ public:
 
   pick_ret_t pick(size_t hashed_key) const {
     pick_ret_t ret;
-    for (size_t try_cnt = 0; try_cnt < node_size(); ++try_cnt) {
+    size_t     max_try_pick_cnt = balance_strategy().max_try_pick_cnt > 0
+                                      ? balance_strategy().max_try_pick_cnt
+                                      : slot_size();
+    for (size_t retry_cnt = 0;; ++retry_cnt) {
+      if (retry_cnt == max_try_pick_cnt) {
+        ret.failed = true;
+        break;
+      }
       size_t slot_idx =
-          balance_strategy().rehash(hashed_key, try_cnt, slot_size());
-      ret.node_idx      = slot_array()[slot_idx];
-      ret.node          = node_manager()[ret.node_idx];
-      ret.is_consistent = try_cnt == 0;
+          balance_strategy().rehash(hashed_key, retry_cnt, slot_size());
+      size_t node_idx = slot_array()[slot_idx];
+      if (retry_cnt == 0) {
+        ret.consistent_node_idx = node_idx;
+        ret.consistent_node     = node_manager()[node_idx];
+      }
+      ret.node_idx      = node_idx;
+      ret.node          = node_manager()[node_idx];
+      ret.retry_cnt     = retry_cnt;
+      ret.is_consistent = ret.node_idx == ret.consistent_node_idx;
       if (balance_strategy().should_balance(
               ret.node->load_stats(), global_load(), node_size())) {
         continue;
@@ -401,6 +422,7 @@ public:
               ret.node->load_stats(), global_load(), node_size())) {
         continue;
       }
+      ret.failed = false;
       break;
     }
     return ret;

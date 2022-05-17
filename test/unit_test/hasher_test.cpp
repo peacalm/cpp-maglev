@@ -243,6 +243,15 @@ TEST(hasher, maglev_balancer_weighted_server_stats) {
     auto ret = b.pick_with_auto_hash(i);
     consistent_q += ret.is_consistent;
 
+    if (ret.is_consistent) {
+      EXPECT_EQ(ret.node_idx, ret.consistent_node_idx);
+      EXPECT_EQ(ret.node, ret.consistent_node);
+      EXPECT_EQ(ret.node->id(), ret.consistent_node->id());
+    } else {
+      EXPECT_NE(ret.node_idx, ret.consistent_node_idx);
+      EXPECT_NE(ret.node, ret.consistent_node);
+      EXPECT_NE(ret.node->id(), ret.consistent_node->id());
+    }
     ret.node->incr_load();
     b.global_load().incr_load(ret.node->load_unit());
 
