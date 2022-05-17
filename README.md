@@ -3,6 +3,8 @@
 C++ standard requirement: >= C++14
 
 ## Intruduction
+
+### maglev_hasher: only a consistent hasher
 The class to do consistent hash:
 ```C++
 template <typename NodeType        = node_base<std::string>,
@@ -28,8 +30,20 @@ larger than number of candidate nodes.
 
 NodeManagerType and NodeManagerType will be auto deduced.
 
+### maglev_balancer: not only a consistent hasher, but a dynamic load balancer
+```C++
+template <typename MaglevHasherType =
+              maglev_hasher<load_stats_wrapper<node_base<>, load_stats<>>>,
+          typename BalanceStrategyType = default_balance_strategy>
+class maglev_balancer;
+```
+MaglevHasherType: a maglev_hasher, its node type must have stats.
+BalanceStrategyType: a struct contains dynamic balance parameters and methods.
 
 ## Usage Examples
+
+### maglev_hasher
+
 Candidates without weights:
 ```C++
 // use default template parameters
@@ -72,4 +86,78 @@ for (int i = 0; i < 100; ++i) {
 }
 ```
 
+### maglev balancer
 
+With unweighted nodes:
+```C++
+maglev::maglev_balancer<> b;
+for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
+b.maglev_hasher().build();
+for (int i = 0; i < 12345; ++i) {
+  auto ret = b.pick_with_auto_hash(i);
+  ret.node->incr_load();
+  b.global_load().incr_load();
+  // heartbeat should be called in another thread
+  if (i > 0 && i % 100 == 0) { b.heartbeat(); }
+}
+```
+
+With unweighted server nodes:
+```C++
+maglev::maglev_balancer<maglev::maglev_hasher<
+    maglev::load_stats_wrapper<maglev::node_base<std::string>,
+                               maglev::unweighted_server_load_stats<>>>>
+    b;
+for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
+b.maglev_hasher().build();
+
+for (int i = 0; i < 10000; ++i) {
+  auto ret = b.pick_with_auto_hash(i);
+
+  ret.node->incr_load();
+  b.global_load().incr_load(ret.node->load_unit());
+
+  // mock RPC result
+  bool fatal   = rand() % 50 == 0;
+  bool error   = fatal || rand() % 10 == 0;
+  int  latency = 100 + rand() % 50;
+
+  ret.node->incr_server_load(1, error, fatal, latency);
+  b.global_load().incr_server_load(1, error, fatal, latency);
+
+  // heartbeat should be called in another thread
+  if (i > 0 && i % 300 == 0) { b.heartbeat(); }
+}
+```
+
+With weighted server nodes:
+```C++
+maglev::maglev_balancer<maglev::maglev_hasher<maglev::load_stats_wrapper<
+    maglev::slot_counted_node_wrapper<
+        maglev::weighted_node_wrapper<maglev::server_node_base<>>>,
+    maglev::server_load_stats_wrapper<>>>>
+    b;
+for (int i = 0; i < 10; ++i) {
+  auto n = b.node_manager().new_back("10.0.0." + std::to_string(i), 88);
+  n->set_weight(10 + rand() % 20);
+}
+b.maglev_hasher().build();
+
+for (int i = 0; i < 10000; ++i) {
+  auto ret = b.pick_with_auto_hash(i);
+
+  ret.node->incr_load();
+  b.global_load().incr_load(ret.node->load_unit());
+
+  // mock RPC result
+  bool fatal   = rand() % 50 == 0;
+  bool error   = fatal || rand() % 10 == 0;
+  int  latency = 100 + rand() % 50;
+
+  ret.node->incr_server_load(1, error, fatal, latency);
+  b.global_load().incr_server_load(1, error, fatal, latency);
+
+  // heartbeat should be called in another thread
+  if (i > 0 && i % 300 == 0) { b.heartbeat(); }
+}
+```
