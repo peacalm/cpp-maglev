@@ -3,9 +3,9 @@
 **Maglev consistent hash algorithm** is published by Google, here is a C++ 
 implementation library based on it. But this is not only a consistent hasher, 
 it is also a dynamic load balancer based on consistent hash. 
-This library is very useful as a Service Proxy, to build a Stateful Service. 
+This library is very useful as a Service Proxy to build a Stateful Service. 
 
-Google's Maglev consistent hash algorithm don’t support consistent hash on 
+Google's Maglev consistent hash algorithm doesn’t support consistent hash on 
 weighted candidate nodes, here this library has supported this feature with 
 an original idea. (By probability based on pseudo-random number sequence) 
 
