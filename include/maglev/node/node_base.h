@@ -39,6 +39,12 @@ public:
 
   node_base(node_id_t&& id) : id_(std::move(id)) {}
 
+  // delete copy and move
+  node_base(const node_base&)            = delete;
+  node_base(node_base&&)                 = delete;
+  node_base& operator=(const node_base&) = delete;
+  node_base& operator=(node_base&&)      = delete;
+
   node_id_t id() const { return id_; }
 
   size_t id_hash() const { return hash_t{}(id()); }
