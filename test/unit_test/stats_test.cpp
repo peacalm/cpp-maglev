@@ -297,6 +297,8 @@ TEST(stats, load_stats) {
   a.set_load_rank(3);
   EXPECT_EQ(a.load_rank(), 3);
 
+  maglev_watch(a, a.to_str());
+
   maglev::load_stats<int, 33> b;
   b.set_load_unit(3);
   EXPECT_EQ(b.load_unit(), 3);
@@ -318,6 +320,8 @@ TEST(stats, load_stats) {
   c.set_last_ban_time(0);
   EXPECT_EQ(c.consecutive_ban_cnt(), 0);
   EXPECT_EQ(c.last_ban_time(), 0);
+
+  maglev_watch(c, c.to_str());
 
   // server_load_stats_wrapper
   maglev::server_load_stats_wrapper<maglev::load_stats<>> s;
@@ -350,6 +354,8 @@ TEST(stats, load_stats) {
   EXPECT_EQ(s.fatal_rate_of_last(), 0.01);
   EXPECT_EQ(s.error_rate_of_window(), 0.05);
   EXPECT_EQ(s.fatal_rate_of_window(), 0.01);
+
+  maglev_watch(s, s.to_str());
 
   maglev::server_load_stats_wrapper<maglev::fake_load_stats<int, 4>> x;
 
@@ -392,4 +398,6 @@ TEST(stats, load_stats) {
   EXPECT_EQ(x.error().sum(), 5);
   EXPECT_EQ(x.fatal().sum(), 3);
   EXPECT_EQ(x.latency().sum(), 238 * 1000);
+
+  maglev_watch(x, x.to_str());
 }

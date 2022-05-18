@@ -42,6 +42,10 @@ public:
   const load_stats_t& load_stats() const {
     return *static_cast<load_stats_t>(this);
   }
+
+  virtual std::string to_str() const override {
+    return (std::ostringstream{} << *this).str();
+  }
 };
 
 template <typename Char,

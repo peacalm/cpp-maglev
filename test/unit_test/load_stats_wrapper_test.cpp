@@ -26,4 +26,6 @@ TEST(stats, node_stats_wrapper) {
   EXPECT_EQ(a.load().now(), 0);
   EXPECT_EQ(a.load().last(), 1);
   EXPECT_EQ(a.load().sum(), 1);
+
+  maglev_watch(a, a.to_str());
 }
