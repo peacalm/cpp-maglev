@@ -60,7 +60,7 @@ BalanceStrategyType: a struct contains dynamic balance parameters and methods.
 
 Candidates without weights:
 ```C++
-// use default template parameters
+// Use default template parameters
 maglev::maglev_hasher<> h;
 // Init candidate nodes, which has string type node id
 for (int i = 0; i < 10; ++i) {
@@ -73,13 +73,13 @@ h.build();
 
 for (int i = 0; i < 100; ++i) {
   auto req = i;
-  // pick with int type req
+  // Pick with int type req
   auto node_ptr = h.pick_with_auto_hash(req).node;
   std::cout << "" << req << " -> " << node_ptr->id() << std::endl;
 }
 for (int i = 0; i < 100; ++i) {
   auto req = std::to_string(i);
-  // pick with string type req
+  // Pick with string type req
   auto node_ptr = h.pick_with_auto_hash(req).node;
   std::cout << "maglev hash: " << req << " -> " << node_ptr->id() << std::endl;
 }
@@ -87,7 +87,7 @@ for (int i = 0; i < 100; ++i) {
 
 Candidates with weights, Weighted Maglev Hasher:
 ```C++
-// nodes with int type id
+// Nodes with int type id
 maglev::maglev_hasher<maglev::weighted_node_wrapper<maglev::node_base<int>>> h;
 for (int i = 0; i < 10; ++i) {
   h.node_manager().new_back(i)->set_weight(20 + rand() % 100);
@@ -111,7 +111,7 @@ for (int i = 0; i < 12345; ++i) {
   auto ret = b.pick_with_auto_hash(i);
   ret.node->incr_load();
   b.global_load().incr_load();
-  // heartbeat should be called in another thread
+  // Heartbeat should better be called in another thread in real application
   if (i > 0 && i % 100 == 0) { b.heartbeat(); }
 }
 ```
@@ -131,7 +131,7 @@ for (int i = 0; i < 10000; ++i) {
   ret.node->incr_load();
   b.global_load().incr_load(ret.node->load_unit());
 
-  // mock RPC result
+  // Mock RPC result
   bool fatal   = rand() % 50 == 0;
   bool error   = fatal || rand() % 10 == 0;
   int  latency = 100 + rand() % 50;
@@ -139,7 +139,7 @@ for (int i = 0; i < 10000; ++i) {
   ret.node->incr_server_load(1, error, fatal, latency);
   b.global_load().incr_server_load(1, error, fatal, latency);
 
-  // heartbeat should be called in another thread
+  // Heartbeat should better be called in another thread in real application
   if (i > 0 && i % 300 == 0) { b.heartbeat(); }
 }
 ```
