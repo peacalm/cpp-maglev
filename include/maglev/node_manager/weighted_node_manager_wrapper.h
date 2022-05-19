@@ -46,7 +46,7 @@ public:
   virtual void ready_go() override {
     base_t::ready_go();
     init_weight();
-    __init_load_units<has_stats_v<node_t>>(10000);
+    __init_load_units(10000, has_stats_t<node_t>{});
   }
 
   void init_load_units(size_t factor = 10000) {
@@ -95,14 +95,9 @@ public:
   virtual std::string to_str() const override { return maglev::to_str(*this); }
 
 private:
-  template <bool node_has_stats>
-  void __init_load_units(size_t factor) {}
+  void __init_load_units(size_t factor, std::false_type) {}
 
-  template <>
-  void __init_load_units<false>(size_t factor) {}
-
-  template <>
-  void __init_load_units<true>(size_t factor) {
+  void __init_load_units(size_t factor, std::true_type) {
     init_load_units(factor);
   }
 
