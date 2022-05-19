@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <sstream>
+
 #include "atomic_counter.h"
 #include "cycle_array.h"
 #include "sliding_window.h"
