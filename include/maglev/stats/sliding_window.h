@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include "atomic_counter.h"
-#include "cycle_array.h"
+#include "maglev/stats/atomic_counter.h"
+#include "maglev/stats/cycle_array.h"
 
 namespace maglev {
 

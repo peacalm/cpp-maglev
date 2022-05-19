@@ -19,7 +19,8 @@
 #include <type_traits>
 #include <utility>
 
-#include "node_base.h"
+#include "maglev/node/node_base.h"
+#include "maglev/util/to_str.h"
 
 namespace maglev {
 
@@ -43,9 +44,7 @@ public:
     return ip + ":" + std::to_string(port);
   }
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_members(
@@ -89,9 +88,7 @@ public:
     return ip + ":" + std::to_string(port) + ":" + std::to_string(vid);
   }
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_members(

@@ -21,6 +21,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "maglev/util/to_str.h"
+
 namespace maglev {
 
 template <typename NodeType,
@@ -93,6 +95,8 @@ public:
   void for_each(Function f) {
     for (auto& i : *this) f(i);
   }
+
+  virtual std::string to_str() const { return maglev::to_str(*this); }
 };
 
 template <typename Char,

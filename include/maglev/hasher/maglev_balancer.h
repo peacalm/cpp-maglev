@@ -18,9 +18,9 @@
 #include <cmath>
 #include <limits>
 
+#include "maglev/hasher/maglev_hasher.h"
 #include "maglev/stats/load_stats.h"
 #include "maglev/stats/load_stats_wrapper.h"
-#include "maglev_hasher.h"
 
 namespace maglev {
 

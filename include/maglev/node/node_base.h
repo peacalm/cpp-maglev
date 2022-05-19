@@ -20,6 +20,7 @@
 #include <utility>
 
 #include "maglev/util/hash.h"
+#include "maglev/util/to_str.h"
 
 namespace maglev {
 
@@ -51,9 +52,7 @@ public:
 
   bool operator<(const node_base& rhs) const { return id() < rhs.id(); }
 
-  virtual std::string to_str() const {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_members(

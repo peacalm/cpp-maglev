@@ -19,13 +19,14 @@
 #include <utility>
 
 #include "maglev/stats/load_stats.h"
+#include "maglev/util/to_str.h"
 #include "maglev/util/type_traits.h"
 
 namespace maglev {
 
-template <typename NodeGroupBaseType>
-class weighted_node_manager_wrapper : public NodeGroupBaseType {
-  using base_t = NodeGroupBaseType;
+template <typename NodeManagerBaseType>
+class weighted_node_manager_wrapper : public NodeManagerBaseType {
+  using base_t = NodeManagerBaseType;
 
 public:
   using node_t = typename base_t::node_t;
@@ -90,6 +91,8 @@ public:
   bool is_max_weight_limited() const {
     return limited_max_weight() < max_weight();
   }
+
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
 private:
   template <bool node_has_stats>

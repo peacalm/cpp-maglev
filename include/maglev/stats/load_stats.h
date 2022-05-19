@@ -16,9 +16,10 @@
 
 #include <sstream>
 
-#include "atomic_counter.h"
-#include "cycle_array.h"
-#include "sliding_window.h"
+#include "maglev/stats/atomic_counter.h"
+#include "maglev/stats/cycle_array.h"
+#include "maglev/stats/sliding_window.h"
+#include "maglev/util/to_str.h"
 
 namespace maglev {
 
@@ -48,9 +49,7 @@ public:
   void incr_load(load_value_t d);
   */
 
-  virtual std::string to_str() const {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
@@ -98,9 +97,7 @@ public:
   void incr_load() { load_.incr(load_unit()); }
   void incr_load(load_value_t d) { load_.incr(d); }
 
-  virtual std::string to_str() const {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
@@ -146,9 +143,7 @@ public:
   ban_time_t last_ban_time() const { return last_ban_time_; }
   void       set_last_ban_time(ban_time_t t) { last_ban_time_ = t; }
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
@@ -268,9 +263,7 @@ public:
     latency_.incr(l);
   }
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
@@ -358,9 +351,7 @@ public:
   void incr_load() {}
   void incr_load(load_value_t d) {}
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_stats(
