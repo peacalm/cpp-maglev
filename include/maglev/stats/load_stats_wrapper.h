@@ -19,6 +19,7 @@
 #include "maglev/node/slot_counted_node_wrapper.h"
 #include "maglev/node/weighted_node_wrapper.h"
 #include "maglev/stats/load_stats.h"
+#include "maglev/util/to_str.h"
 
 namespace maglev {
 
@@ -43,9 +44,7 @@ public:
     return *static_cast<load_stats_t>(this);
   }
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 };
 
 template <typename Char,

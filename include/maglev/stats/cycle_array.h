@@ -15,15 +15,16 @@
 #pragma once
 
 #include <array>
+#include <type_traits>
 
 namespace maglev {
 
 /// Index for a cycle array, integral value in [0, Size-1].
 template <size_t Size = 64>
 class cycle_index {
-  static constexpr bool is_size_power_of_two_ = ((Size & (Size - 1)) == 0);
-
 public:
+  using is_size_power_of_two_t =
+      std::integral_constant<bool, ((Size & (Size - 1)) == 0)>;
   using index_value_t = size_t;
 
   cycle_index(index_value_t v = 0) : i_(mod(v)) {}
@@ -31,7 +32,9 @@ public:
   cycle_index(cycle_index&& r) : i_(r.i_) {}
 
   static constexpr size_t size() { return Size; }
-  static constexpr bool is_size_power_of_two() { return is_size_power_of_two_; }
+  static constexpr bool   is_size_power_of_two() {
+      return is_size_power_of_two_t::value;
+  }
 
   index_value_t get() const { return i_; }
 
@@ -82,7 +85,7 @@ public:
   index_value_t next(index_value_t delta) const { return mod(i_ + delta); }
 
   index_value_t mod(index_value_t v) const {
-    return __mod<is_size_power_of_two_>(v);
+    return __mod(v, is_size_power_of_two_t{});
   }
 
   bool operator==(const cycle_index& r) const { return i_ == r.i_; }
@@ -100,16 +103,12 @@ public:
   bool operator>=(index_value_t r) const { return i_ >= r; }
 
 private:
-  template <bool>
-  index_value_t __mod(index_value_t v) const;
-
-  template <>
-  index_value_t __mod<false>(index_value_t v) const {
-    return v % size();
-  }
-  template <>
-  index_value_t __mod<true>(index_value_t v) const {
+  index_value_t __mod(index_value_t v, std::true_type) const {
     return v & (size() - 1);
+  }
+
+  index_value_t __mod(index_value_t v, std::false_type) const {
+    return v % size();
   }
 
 private:

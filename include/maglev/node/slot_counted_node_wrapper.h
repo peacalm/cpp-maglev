@@ -19,6 +19,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "maglev/util/to_str.h"
+
 namespace maglev {
 
 template <typename NodeBaseType>
@@ -39,9 +41,7 @@ public:
 
   void set_slot_cnt(int s) { slot_cnt_ = s; }
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_members(

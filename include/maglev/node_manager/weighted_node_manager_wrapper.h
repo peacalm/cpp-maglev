@@ -19,13 +19,14 @@
 #include <utility>
 
 #include "maglev/stats/load_stats.h"
+#include "maglev/util/to_str.h"
 #include "maglev/util/type_traits.h"
 
 namespace maglev {
 
-template <typename NodeGroupBaseType>
-class weighted_node_manager_wrapper : public NodeGroupBaseType {
-  using base_t = NodeGroupBaseType;
+template <typename NodeManagerBaseType>
+class weighted_node_manager_wrapper : public NodeManagerBaseType {
+  using base_t = NodeManagerBaseType;
 
 public:
   using node_t = typename base_t::node_t;
@@ -45,7 +46,7 @@ public:
   virtual void ready_go() override {
     base_t::ready_go();
     init_weight();
-    __init_load_units<has_stats_v<node_t>>(10000);
+    __init_load_units(10000, has_stats_t<node_t>{});
   }
 
   void init_load_units(size_t factor = 10000) {
@@ -91,15 +92,12 @@ public:
     return limited_max_weight() < max_weight();
   }
 
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
+
 private:
-  template <bool node_has_stats>
-  void __init_load_units(size_t factor) {}
+  void __init_load_units(size_t factor, std::false_type) {}
 
-  template <>
-  void __init_load_units<false>(size_t factor) {}
-
-  template <>
-  void __init_load_units<true>(size_t factor) {
+  void __init_load_units(size_t factor, std::true_type) {
     init_load_units(factor);
   }
 

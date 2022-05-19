@@ -19,6 +19,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "maglev/util/to_str.h"
+
 namespace maglev {
 
 template <typename BaseType,
@@ -63,9 +65,7 @@ public:
 
   extra_t& extra() { return extra_; }
 
-  virtual std::string to_str() const override {
-    return (std::ostringstream{} << *this).str();
-  }
+  virtual std::string to_str() const override { return maglev::to_str(*this); }
 
   template <typename Char, typename Traits>
   std::basic_ostream<Char, Traits>& output_members(
