@@ -20,9 +20,7 @@ namespace maglev {
 
 template <typename Type>
 std::string to_str(const Type& t) {
-  std::ostringstream oss;
-  oss << t;
-  return oss.str();
+  return static_cast<std::ostringstream&>(std::ostringstream{} << t).str();
 }
 
 }  // namespace maglev
