@@ -179,3 +179,15 @@ for (int i = 0; i < 10000; ++i) {
   if (i > 0 && i % 300 == 0) { b.heartbeat(); }
 }
 ```
+
+## Build and Test
+Test cases are built using [GoogleTest](https://github.com/google/googletest).
+You need to install it first.
+
+```Bash
+mkdir build
+cd build
+cmake .. -DBUILD_TEST=TRUE
+make
+make test
+```
