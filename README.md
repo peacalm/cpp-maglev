@@ -1,6 +1,9 @@
 # Maglev: a Consistent Hasher & Load Balancer
 
-![build](https://github.com/peacalm/cpp-maglev/actions/workflows/cmake.yml/badge.svg)
+![Build](https://github.com/peacalm/cpp-maglev/actions/workflows/cmake.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+
 
 **Maglev consistent hash algorithm** is published by Google, here is a C++ 
 implementation library based on it. But this is not only a consistent hasher, 
