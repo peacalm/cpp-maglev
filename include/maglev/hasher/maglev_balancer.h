@@ -15,6 +15,7 @@
 #pragma once
 
 #include <algorithm>
+#include <limits>
 
 #include "maglev/stats/load_stats.h"
 #include "maglev/stats/load_stats_wrapper.h"
@@ -37,7 +38,7 @@ struct default_balance_strategy {
   double eps_of_latency_to_balance            = 1.5;
   double max_pct_of_balance_by_latency        = 0.03;
   double min_error_rate_to_balance_by_latency = 0.01;
-  int    latency_th_to_force_balance          = INT_MAX;
+  int    latency_th_to_force_balance          = std::numeric_limits<int>::max();
 
   double max_pct_of_balance_by_error        = 0.03;
   double min_error_rate_to_balance_by_error = 0.5;
