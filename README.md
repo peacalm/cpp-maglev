@@ -6,7 +6,9 @@
 
 **Maglev consistent hash algorithm** is published by Google, here is a C++ 
 implementation library based on it. But this is not only a consistent hasher, 
-it is also a dynamic load balancer based on consistent hash. 
+it is also a dynamic load balancer based on consistent hash. In particular, 
+the dynamic load balancer can deal with hot key problem, which a pure Magle 
+hasher can not.
 This library is very useful as a Service Proxy to build a Stateful Service. 
 
 Google's Maglev consistent hash algorithm doesn’t support consistent hash on 
