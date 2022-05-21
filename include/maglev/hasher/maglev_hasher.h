@@ -21,6 +21,9 @@
 
 #include "maglev/hasher/slot_array.h"
 #include "maglev/node/node_base.h"
+#include "maglev/node/server_node_base.h"
+#include "maglev/node/slot_counted_node_wrapper.h"
+#include "maglev/node/weighted_node_wrapper.h"
 #include "maglev/node_manager/node_manager_base.h"
 #include "maglev/node_manager/weighted_node_manager_wrapper.h"
 #include "maglev/permutation/permutation_generator.h"
