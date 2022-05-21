@@ -130,6 +130,7 @@ protected:
     slot_array_[slot_idx] = (slot_int_t)node_idx;
   }
 
+  // for weighted nodes
   void select_once(perm_gen_t& perm_gen,
                    size_t&     node_idx,
                    size_t&     slot_distributed_cnt,
@@ -143,6 +144,7 @@ protected:
     }
   }
 
+  // for unweighted nodes
   void select_once(perm_gen_t& perm_gen,
                    size_t&     node_idx,
                    size_t&     slot_distributed_cnt,
