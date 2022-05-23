@@ -1,6 +1,6 @@
 # Maglev: a Consistent Hasher & Load Balancer
 
-![Build](https://github.com/peacalm/cpp-maglev/actions/workflows/cmake.yml/badge.svg)
+[![Build](https://github.com/peacalm/cpp-maglev/actions/workflows/cmake.yml/badge.svg)](https://github.com/peacalm/cpp-maglev/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 
