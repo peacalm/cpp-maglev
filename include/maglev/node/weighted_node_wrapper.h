@@ -23,6 +23,7 @@
 
 namespace maglev {
 
+/// A node wrapper to make a weighted node type.
 template <typename NodeBaseType>
 class weighted_node_wrapper : public NodeBaseType {
   using base_t = NodeBaseType;

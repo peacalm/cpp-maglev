@@ -23,6 +23,8 @@
 
 namespace maglev {
 
+/// A node wrapper to record how many slots obtained from maglev hasher.
+/// Useful for debug.
 template <typename NodeBaseType>
 class slot_counted_node_wrapper : public NodeBaseType {
   using base_t = NodeBaseType;

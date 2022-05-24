@@ -24,6 +24,7 @@
 
 namespace maglev {
 
+/// A server node with member ip and port.
 template <typename NodeBaseType = node_base<std::string>>
 class server_node_base : public NodeBaseType {
   using base_t = NodeBaseType;
@@ -67,6 +68,7 @@ std::basic_ostream<Char, Traits>& operator<<(
   return os;
 }
 
+/// A virtual server node with member ip, port and virtual-id.
 template <typename NodeBaseType = node_base<std::string>>
 class virtual_server_node_base : public server_node_base<NodeBaseType> {
   using base_t = server_node_base<NodeBaseType>;

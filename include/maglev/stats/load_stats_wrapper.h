@@ -23,6 +23,7 @@
 
 namespace maglev {
 
+/// A wrapper to make a node type has stats, mainly used for maglev_balancer.
 template <typename NodeMetaType, typename LoadStatsType>
 class load_stats_wrapper : public NodeMetaType, public LoadStatsType {
 public:

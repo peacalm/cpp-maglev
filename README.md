@@ -25,7 +25,7 @@ C++ standard requirement: >= C++14
 
 ### maglev_hasher: only a consistent hasher
 The class to do consistent hash:
-```C++
+```c++
 template <typename NodeType        = node_base<std::string>,
           typename SlotArrayType   = slot_array<int>,
           typename NodeManagerType = typename std::conditional<
@@ -50,7 +50,7 @@ larger than number of candidate nodes.
 NodeManagerType and NodeManagerType will be auto deduced.
 
 ### maglev_balancer: not only a consistent hasher, but a dynamic load balancer
-```C++
+```c++
 template <typename MaglevHasherType =
               maglev_hasher<load_stats_wrapper<node_base<>, load_stats<>>>,
           typename BalanceStrategyType = default_balance_strategy>
@@ -60,12 +60,54 @@ MaglevHasherType: a maglev_hasher, its node type must have stats.
 
 BalanceStrategyType: a struct contains dynamic balance parameters and methods.
 
+### Node Types
+Node type is primary template parameter for `maglev::maglev_hasher`. 
+To make this lib flexible for different scenarios, node types are designed into 
+node-base-types and node-wrapper-types. 
+e.g. if you want to use weighted node, you can use a 
+`maglev::weighted_node_wrapper` wrapped on a `maglev::node_base`.
+
+```c++
+/// Basic node type with an immutable member id
+template <typename IdType = std::string, typename HashType = def_hash_t<IdType>>
+class node_base;
+
+/// A server node with member ip and port.
+template <typename NodeBaseType = node_base<std::string>>
+class server_node_base : public NodeBaseType;
+
+/// A virtual server node with member ip, port and virtual-id.
+template <typename NodeBaseType = node_base<std::string>>
+class virtual_server_node_base : public server_node_base<NodeBaseType>;
+
+/// A node wrapper to make a weighted node type.
+template <typename NodeBaseType>
+class weighted_node_wrapper : public NodeBaseType;
+
+/// A node wrapper to record how many slots obtained from maglev hasher.
+/// Useful for debug.
+template <typename NodeBaseType>
+class slot_counted_node_wrapper : public NodeBaseType;
+```
+
+Except for the above node types, which is called node-meta-type, 
+nodes to be used for `maglev::maglev_balancer` must have a load-stats-type 
+member. So here is a wrapper:
+
+```c++
+/// A wrapper to make a node type has stats, mainly used for maglev_balancer.
+template <typename NodeMetaType, typename LoadStatsType>
+class load_stats_wrapper : public NodeMetaType, public LoadStatsType;
+```
+
+Load-stats-types defined in "maglev/stats/load_stats.h".
+
 ## Usage Examples
 
 ### maglev_hasher
 
 Candidates without weights:
-```C++
+```c++
 // Use default template parameters
 maglev::maglev_hasher<> h;
 // Init candidate nodes, which has string type node id
@@ -92,7 +134,7 @@ for (int i = 0; i < 100; ++i) {
 ```
 
 Candidates with weights, Weighted Maglev Hasher:
-```C++
+```c++
 // Nodes with int type id
 maglev::maglev_hasher<maglev::weighted_node_wrapper<maglev::node_base<int>>> h;
 for (int i = 0; i < 10; ++i) {
@@ -109,7 +151,7 @@ for (int i = 0; i < 100; ++i) {
 ### maglev balancer
 
 With unweighted nodes:
-```C++
+```c++
 maglev::maglev_balancer<> b;
 for (int i = 0; i < 10; ++i) { b.node_manager().new_back(std::to_string(i)); }
 b.maglev_hasher().build();
@@ -123,7 +165,7 @@ for (int i = 0; i < 12345; ++i) {
 ```
 
 With unweighted server nodes:
-```C++
+```c++
 maglev::maglev_balancer<maglev::maglev_hasher<
     maglev::load_stats_wrapper<maglev::node_base<std::string>,
                                maglev::unweighted_server_load_stats<>>>>
@@ -151,7 +193,7 @@ for (int i = 0; i < 10000; ++i) {
 ```
 
 With weighted server nodes:
-```C++
+```c++
 maglev::maglev_balancer<maglev::maglev_hasher<maglev::load_stats_wrapper<
     maglev::slot_counted_node_wrapper<
         maglev::weighted_node_wrapper<maglev::server_node_base<>>>,
