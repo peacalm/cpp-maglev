@@ -13,7 +13,7 @@ SET(CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${PROJECT_NAME}")
 
 option(BUILD_TEST "Build test." FALSE)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if (BUILD_TEST)
     enable_testing()
