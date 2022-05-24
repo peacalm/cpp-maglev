@@ -182,7 +182,7 @@ for (int i = 0; i < 10000; ++i) {
 }
 ```
 
-## Build and Test
+## Build, Test, Install
 Test cases are built using [GoogleTest](https://github.com/google/googletest).
 You need to install it first.
 Then run:
@@ -193,5 +193,8 @@ mkdir build
 cd build
 cmake .. -DBUILD_TEST=TRUE
 make
+# Test
 make test
+# Install
+make install
 ```
