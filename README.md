@@ -132,7 +132,7 @@ class unweighted_server_load_stats
 
 ## Usage Examples
 
-### maglev_hasher
+### maglev_hasher: a pure Maglev consistent hasher
 
 Candidates without weights:
 ```c++
@@ -176,7 +176,7 @@ for (int i = 0; i < 100; ++i) {
 }
 ```
 
-### maglev balancer
+### maglev balancer: a dynamic load balancer based on Maglev consistent hasher
 
 With unweighted nodes:
 ```c++
