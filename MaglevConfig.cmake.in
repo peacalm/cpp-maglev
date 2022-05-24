@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.14)
+
+set(Maglev_INCLUDE_DIR "@INCLUDE_INSTALL_DIR@")
+
+message(STATUS "Maglev found. Headers at ${Maglev_INCLUDE_DIR}")
