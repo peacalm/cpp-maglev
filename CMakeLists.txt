@@ -13,8 +13,6 @@ SET(CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${PROJECT_NAME}")
 
 option(BUILD_TEST "Build test." TRUE)
 
-file(GLOB_RECURSE SOURCE_FILES "include/*.h" "include/*/*.h")
-
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 if (BUILD_TEST)
