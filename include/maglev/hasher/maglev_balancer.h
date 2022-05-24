@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <ctime>
 #include <limits>
 
 #include "maglev/hasher/maglev_hasher.h"
