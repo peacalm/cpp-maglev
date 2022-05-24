@@ -46,15 +46,11 @@ public:
   virtual void ready_go() override {
     base_t::ready_go();
     init_weight();
-    __init_load_units(10000, has_stats_t<node_t>{});
+    init_load_units();
   }
 
   void init_load_units(size_t factor = 10000) {
-    for (const auto& n : *this) {
-      if (n->weight() > 0) {
-        n->set_load_unit(size_t(1.0 * factor * avg_weight() / n->weight()));
-      }
-    }
+    __init_load_units(factor, has_stats_t<node_t>{});
   }
 
   void set_max_avg_rate_limit(double r) { max_avg_rate_limit_ = r; }
@@ -98,7 +94,12 @@ private:
   void __init_load_units(size_t factor, std::false_type) {}
 
   void __init_load_units(size_t factor, std::true_type) {
-    init_load_units(factor);
+    for (const auto& n : *this) {
+      if (n->weight() > 0) {
+        size_t u = size_t(1.0 * factor * avg_weight() / n->weight());
+        n->set_load_unit(u > 0 ? u : 1);
+      }
+    }
   }
 
 private:

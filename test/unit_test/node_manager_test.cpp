@@ -79,3 +79,25 @@ TEST(node_manager, weighted_node_manager_wrapper) {
 
   maglev_watch_with_std_cout(nm);
 }
+
+TEST(node_manager, weighted_node_manager_same_weights) {
+  using node_type = maglev::load_stats_wrapper<
+      maglev::weighted_node_wrapper<maglev::node_base<int>>,
+      maglev::load_stats<>>;
+  maglev::weighted_node_manager_wrapper<maglev::node_manager_base<node_type>>
+      nm;
+  EXPECT_TRUE(nm.empty());
+  nm.new_back(1)->set_weight(10);
+  nm.new_back(2)->set_weight(10);
+  nm.new_back(3)->set_weight(10);
+  nm.new_back(4)->set_weight(10);
+  EXPECT_EQ(nm.size(), 4);
+
+  nm.ready_go();
+  nm.find_by_node_id(1)->incr_load();
+  nm.find_by_node_id(2)->incr_load();
+  nm.init_load_units(1);
+  nm.find_by_node_id(3)->incr_load();
+  nm.find_by_node_id(4)->incr_load();
+  maglev_watch_with_std_cout(nm);
+}
