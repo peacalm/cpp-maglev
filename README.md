@@ -68,24 +68,24 @@ e.g. if you want to use weighted node, you can use a
 `maglev::weighted_node_wrapper` wrapped on a `maglev::node_base`.
 
 ```c++
-/// Basic node type with an immutable member id
+// Basic node type with an immutable member id
 template <typename IdType = std::string, typename HashType = def_hash_t<IdType>>
 class node_base;
 
-/// A server node with member ip and port.
+// A server node with member ip and port.
 template <typename NodeBaseType = node_base<std::string>>
 class server_node_base : public NodeBaseType;
 
-/// A virtual server node with member ip, port and virtual-id.
+// A virtual server node with member ip, port and virtual-id.
 template <typename NodeBaseType = node_base<std::string>>
 class virtual_server_node_base : public server_node_base<NodeBaseType>;
 
-/// A node wrapper to make a weighted node type.
+// A node wrapper to make a weighted node type.
 template <typename NodeBaseType>
 class weighted_node_wrapper : public NodeBaseType;
 
-/// A node wrapper to record how many slots obtained from maglev hasher.
-/// Useful for debug.
+// A node wrapper to record how many slots obtained from maglev hasher.
+// Useful for debug.
 template <typename NodeBaseType>
 class slot_counted_node_wrapper : public NodeBaseType;
 ```
@@ -95,12 +95,40 @@ nodes to be used for `maglev::maglev_balancer` must have a load-stats-type
 member. So here is a wrapper:
 
 ```c++
-/// A wrapper to make a node type has stats, mainly used for maglev_balancer.
+// A wrapper to make a node type has stats, mainly used for maglev_balancer.
 template <typename NodeMetaType, typename LoadStatsType>
 class load_stats_wrapper : public NodeMetaType, public LoadStatsType;
 ```
 
-Load-stats-types defined in "maglev/stats/load_stats.h".
+A load-stats-type is a timing sequence container with a constant length sliding 
+window. Once a heartbeat called, it will generate a new point and drop out the 
+oldest point. So it's useful to describe a node's load status during a short 
+period of time.
+```c++
+// Basic load-stats-type.
+template <typename PointValueType = unsigned long long, size_t LoadSeqSize = 64>
+class load_stats;
+
+// To describe a server's load in RPC scene. 
+// Record info about query, error, fatal and latency.
+template <typename LoadStatsBase  = load_stats<>,
+          typename QueryCntType   = unsigned int,
+          typename LatencyCntType = unsigned long long,
+          size_t SeqSize          = LoadStatsBase::load_seq_size()>
+class server_load_stats_wrapper : public ban_wrapper<LoadStatsBase>;
+
+
+// To describe a unweighted server's load in RPC scene. 
+// Use query count to describe load.
+template <typename QueryCntType   = unsigned int,
+          typename LatencyCntType = unsigned long long,
+          size_t SeqSize          = 64>
+class unweighted_server_load_stats
+    : public server_load_stats_wrapper<fake_load_stats<QueryCntType>,
+                                       QueryCntType,
+                                       LatencyCntType,
+                                       SeqSize>;
+```
 
 ## Usage Examples
 

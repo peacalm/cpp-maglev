@@ -317,7 +317,7 @@ std::basic_ostream<Char, Traits>& operator<<(
   return os;
 }
 
-/// To describe a server's load in RPC scene.
+/// To describe a unweighted server's load in RPC scene.
 template <typename QueryCntType   = unsigned int,
           typename LatencyCntType = unsigned long long,
           size_t SeqSize          = 64>
