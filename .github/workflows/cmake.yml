@@ -50,4 +50,4 @@ jobs:
 
     - name: Installation Test
       working-directory: ${{github.workspace}}/test/installation_test
-      run: mkdir build && cd build && cmake .. && make
+      run: mkdir build && cd build && cmake .. && make && ctest

@@ -13,3 +13,8 @@ endif()
 add_executable(installation_test "main.cpp")
 
 target_include_directories(installation_test PUBLIC ${Maglev_INCLUDE_DIR})
+
+enable_testing()
+
+add_test(NAME installation_test COMMAND installation_test)
+
