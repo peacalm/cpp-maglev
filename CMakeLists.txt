@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.14)
 project(Maglev
         VERSION 1.0
         DESCRIPTION "Maglev consistent hasher and dynamic load balancer."
-        HOMEPAGE_URL "https://github.com/peacalm/cpp-maglev")
+        HOMEPAGE_URL "https://github.com/peacalm/cpp-maglev"
+        LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
