@@ -61,7 +61,7 @@ MaglevHasherType: a maglev_hasher, its node type must have stats.
 BalanceStrategyType: a struct contains dynamic balance parameters and methods.
 
 ### Node Types
-Node type is primary template parameter for `maglev::maglev_hasher`. 
+Node type is a primary template parameter for `maglev::maglev_hasher`. 
 To make this lib flexible for different scenarios, node types are designed into 
 node-base-types and node-wrapper-types. 
 e.g. if you want to use weighted node, you can use a 
