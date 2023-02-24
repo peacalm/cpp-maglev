@@ -19,7 +19,7 @@ This library is implemented by pluggable template parameters, it's very
 flexible to adapt to different application scenarios. 
 Even its components can be used separately.
 
-C++ standard requirement: >= C++14
+* C++ standard requirement: >= C++14
 
 ## Intruduction
 
@@ -253,8 +253,8 @@ for (int i = 0; i < 10000; ++i) {
 ```
 
 ## Build, Test, Install
-Test cases are built using [GoogleTest](https://github.com/google/googletest).
-You need to install it first.
+Test cases are built using [GoogleTest](https://github.com/google/googletest), 
+you need to install it first.
 Then run:
 ```Bash
 git clone https://github.com/peacalm/cpp-maglev.git
