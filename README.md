@@ -47,7 +47,7 @@ SlotArrayType: `maglev::slot_array` or `maglev::slot_vector`,
 slot number must be a **prime** number, and suggest it should be at least 10 times 
 larger than number of candidate nodes.
 
-NodeManagerType and NodeManagerType will be auto deduced.
+NodeManagerType and PermutationGeneratorType will be auto deduced.
 
 ### maglev_balancer: not only a consistent hasher, but a dynamic load balancer
 ```c++
