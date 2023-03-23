@@ -151,7 +151,7 @@ for (int i = 0; i < 100; ++i) {
   auto req = i;
   // Pick with int type req
   auto node_ptr = h.pick_with_auto_hash(req).node;
-  std::cout << "" << req << " -> " << node_ptr->id() << std::endl;
+  std::cout << "maglev hash: " << req << " -> " << node_ptr->id() << std::endl;
 }
 for (int i = 0; i < 100; ++i) {
   auto req = std::to_string(i);
