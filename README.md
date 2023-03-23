@@ -264,7 +264,7 @@ cd build
 cmake .. -DBUILD_TEST=TRUE
 make
 # Test
-make test
+make test  # or ctest
 # Install
-make install
+sudo make install
 ```
