@@ -95,7 +95,7 @@ nodes to be used for `maglev::maglev_balancer` must have a load-stats-type
 member. So here is a wrapper:
 
 ```c++
-// A wrapper to make a node type has stats, mainly used for maglev_balancer.
+// A wrapper to make a node type have stats, mainly used for maglev_balancer.
 template <typename NodeMetaType, typename LoadStatsType>
 class load_stats_wrapper : public NodeMetaType, public LoadStatsType;
 ```
