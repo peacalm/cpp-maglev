@@ -188,7 +188,7 @@ for (int i = 0; i < 12345; ++i) {
   auto ret = b.pick_with_auto_hash(i);
   ret.node->incr_load();
   b.global_load().incr_load();
-  // Heartbeat should better be called in another thread in real application
+  // Heartbeat should better be called in another thread as a cron job in real application
   if (i > 0 && i % 100 == 0) { b.heartbeat(); }
 }
 ```
@@ -216,7 +216,7 @@ for (int i = 0; i < 10000; ++i) {
   ret.node->incr_server_load(1, error, fatal, latency);
   b.global_load().incr_server_load(1, error, fatal, latency);
 
-  // Heartbeat should better be called in another thread in real application
+  // Heartbeat should better be called in another thread as a cron job in real application
   if (i > 0 && i % 300 == 0) { b.heartbeat(); }
 }
 ```
@@ -248,7 +248,7 @@ for (int i = 0; i < 10000; ++i) {
   ret.node->incr_server_load(1, error, fatal, latency);
   b.global_load().incr_server_load(1, error, fatal, latency);
 
-  // heartbeat should be called in another thread
+  // Heartbeat should better be called in another thread as a cron job in real application
   if (i > 0 && i % 300 == 0) { b.heartbeat(); }
 }
 ```
