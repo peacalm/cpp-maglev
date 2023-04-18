@@ -141,7 +141,8 @@ maglev::maglev_hasher<> h;
 // Init candidate nodes, which has string type node id
 for (int i = 0; i < 10; ++i) {
   std::string node_id = std::string("node-") + std::to_string(i);
-  auto        n       = h.node_manager().new_node(node_id);
+  // Add node. An alternate writing is: h.node_manager().new_back(node_id);
+  auto n = h.node_manager().new_node(node_id);
   h.node_manager().push_back(n);
 }
 // Init maglev_hasher
