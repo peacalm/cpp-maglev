@@ -49,7 +49,7 @@ larger than number of candidate nodes.
 
 NodeManagerType and PermutationGeneratorType will be auto deduced.
 
-### maglev_balancer: not only a consistent hasher, but a dynamic load balancer
+### maglev_balancer: not only a consistent hasher, but also a dynamic load balancer
 ```c++
 template <typename MaglevHasherType =
               maglev_hasher<load_stats_wrapper<node_base<>, load_stats<>>>,
