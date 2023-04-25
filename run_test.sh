@@ -64,13 +64,18 @@ mkdir -p build
 cd build
 cmake .. -DBUILD_TEST=TRUE -DENABLE_MYOSTREAM_WATCH=${MYOSTREAM}
 make
-make test
 
-if [ ${RUN_UNIT_TEST} -eq 1 ]; then
-  ./test/unit_test/unit_test
-fi
-if [ ${RUN_PERFORMANCE_TEST} -eq 1 ]; then
-  ./test/performance_test/performance_test
+if [ $? -eq 0 ]; then
+  make test
+  if [ ${RUN_UNIT_TEST} -eq 1 ]; then
+    ./test/unit_test/unit_test
+  fi
+  if [ ${RUN_PERFORMANCE_TEST} -eq 1 ]; then
+    ./test/performance_test/performance_test
+  fi
+else
+  echo
+  echo "Building Failed!"
 fi
 
 if [ ${CLEAR} -eq 1 ]; then
