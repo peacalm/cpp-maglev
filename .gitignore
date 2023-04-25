@@ -5,3 +5,4 @@ CTestTestfile.cmake
 Makefile
 maglev_test
 build
+a.out
