@@ -3,6 +3,7 @@
 [![Build](https://github.com/peacalm/cpp-maglev/actions/workflows/cmake.yml/badge.svg)](https://github.com/peacalm/cpp-maglev/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+[[中文博文链接]](http://lishuangquan.cn/post/2022/maglev-consistent-hash/)
 
 **Maglev consistent hash algorithm** is published by Google, here is a C++ 
 implementation library based on it. But this is not only a consistent hasher, 
