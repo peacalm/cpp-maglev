@@ -39,7 +39,7 @@ template <typename NodeType        = node_base<std::string>,
                                         permutation_generator>::type>
 class maglev_hasher;
 ```
-NodeType: A node is a candidate, which must have a unique id, and the id must 
+NodeType: A node is a candidate, which must have an unique id, and the id must 
 hashable. If the node has a weight, then the weight must be a **non-negative** 
 number.
 Here is a `maglev::weighted_node_wrapper` which can support weight for a node.
