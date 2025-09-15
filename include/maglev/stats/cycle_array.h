@@ -103,6 +103,7 @@ public:
   bool operator>=(index_value_t r) const { return i_ >= r; }
 
 private:
+  // Mod on some power of 2
   index_value_t __mod(index_value_t v, std::true_type) const {
     return v & (size() - 1);
   }

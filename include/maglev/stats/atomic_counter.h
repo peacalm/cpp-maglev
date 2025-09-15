@@ -24,7 +24,7 @@ template <typename IntType = int>
 class atomic_counter {
   static_assert(std::is_integral<IntType>::value &&
                     !std::is_same<IntType, bool>::value,
-                "atomic_counter should contain a integral type");
+                "atomic_counter should contain an integral type");
 
 public:
   using value_t   = IntType;
