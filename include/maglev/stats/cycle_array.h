@@ -55,7 +55,7 @@ public:
     return *this;
   }
 
-  // Suffix increment and decrement
+  // Prefix increment and decrement
   cycle_index& operator++() {
     i_ = next(1);
     return *this;
@@ -65,7 +65,7 @@ public:
     return *this;
   }
 
-  // Prefix increment and decrement
+  // Suffix increment and decrement
   cycle_index operator++(int) {
     cycle_index ret(*this);
     i_ = next(1);
