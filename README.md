@@ -22,7 +22,7 @@ Even its components can be used separately.
 
 * C++ standard requirement: >= C++14
 
-## Intruduction
+## Introduction
 
 ### maglev_hasher: only a consistent hasher
 The class to do consistent hash:
