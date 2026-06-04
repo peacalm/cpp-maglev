@@ -38,8 +38,8 @@ struct maglev_int_hash {
   }
 };
 
-// std::hash for integer got self, which may cause bad performance in maglev,
-// so use maglev_int_hash as default.
+// The std::hash for integers directly returns the input value itself, which
+// may cause bad performance in Maglev, so use maglev_int_hash as default.
 template <typename T>
 using def_hash_t = typename std::conditional<
     std::is_integral<T>::value,
